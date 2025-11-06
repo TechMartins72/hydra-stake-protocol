@@ -7,7 +7,7 @@ module CustomLibrary {
     export ledger uniqueIndex: Counter;
     export ledger nonce: Bytes<32>;
         
-    enum State { active, closed };
+    enum State { open, closed };
 
     struct StakeInfo {
         staker: Bytes<32>;

@@ -37,7 +37,7 @@ export circuit stakeAsset(coin: CoinInfo): [] {
     stakes.insert(disclose(generateStakeId()), StakeInfo {
         staker,
         stakedAmount,
-        State.active,
+        State.open,
         stakeTime,
         closedDate: 0
     });
@@ -56,7 +56,7 @@ export circuit redeemAsset(coin: CoinInfo, stakeId: Bytes<32>): []  {
     assert (stakeExist, "This stake does not exist");
     
     const stakeInfo = stakes.lookup(disclosedId);
-    assert(stakeInfo.status == State.active, "This stake is closed");
+    assert(stakeInfo.status == State.open, "This stake is closed");
     assert(disclose(public_key(local_secret_key())) == stakeInfo.staker, "This stake does not belong to you");
     // sned received stDUST to a burn address to reduce the amount of stDust in circulation
     
