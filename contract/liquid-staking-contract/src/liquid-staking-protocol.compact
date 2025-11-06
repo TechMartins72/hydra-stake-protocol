@@ -3,9 +3,9 @@ pragma language_version >= 0.16.0 && <= 0.18.0;
 import CompactStandardLibrary;
 import "./CustomLibrary";
 
-export ledger stakesMetadata: Map<Bytes<32>, Metadata>; // keeps track of stakes and it current position: active or closed
-export ledger stakesVault: QualifiedCoinInfo; // keeps track of stDust in circulation
-export ledger tokenToBurn: QualifiedCoinInfo; // keeps track of stDust in circulation
+export ledger stakes: Map<Bytes<32>, StakeInfo>; // keeps track of stakes and it current position: active or closed
+export ledger stakesVault: QualifiedCoinInfo; // keeps track of staked tDust
+export ledger tokenToBurn: QualifiedCoinInfo; // temporarily holds token to burn
 
 constructor(initialNonce: Bytes<32>) {
     nonce = disclose(initialNonce);
@@ -34,7 +34,7 @@ export circuit stakeAsset(coin: CoinInfo): [] {
 
     TVL = stakedAmount + TVL as Uint<128>;
 
-    stakesMetadata.insert(disclose(generateStakeId()), Metadata {
+    stakes.insert(disclose(generateStakeId()), StakeInfo {
         staker,
         stakedAmount,
         State.active,
@@ -52,10 +52,10 @@ export circuit redeemAsset(coin: CoinInfo, stakeId: Bytes<32>): []  {
 
     // confirm token type and stake existence and state
     assert(disclosedCoin.color == stakesVault.color, "Unacceptable token");
-    const stakeExist = stakesMetadata.member(disclosedId);
+    const stakeExist = stakes.member(disclosedId);
     assert (stakeExist, "This stake does not exist");
     
-    const stakeInfo = stakesMetadata.lookup(disclosedId);
+    const stakeInfo = stakes.lookup(disclosedId);
     assert(stakeInfo.status == State.active, "This stake is closed");
     assert(disclose(public_key(local_secret_key())) == stakeInfo.staker, "This stake does not belong to you");
     // sned received stDUST to a burn address to reduce the amount of stDust in circulation
@@ -78,13 +78,11 @@ export circuit redeemAsset(coin: CoinInfo, stakeId: Bytes<32>): []  {
 
 export circuit checkStakeReward(stakeId: Bytes<32>): Uint<64>  {
     const disclosedId = disclose(stakeId);
-    const stakeExist = stakesMetadata.member(disclosedId);
+    const stakeExist = stakes.member(disclosedId);
     assert(stakeExist, "This stake does not exist");
-    const stakeInfo = stakesMetadata.lookup(disclosedId);
+    const stakeInfo = stakes.lookup(disclosedId);
     assert(disclose(public_key(local_secret_key())) == stakeInfo.staker, "This stake does not belong to you");
-
     const totalValue = disclose(getTotalValue(stakeInfo.stakedAmount, stakeInfo.stakeTime));
-
     return totalValue - stakeInfo.stakedAmount;
 }
 

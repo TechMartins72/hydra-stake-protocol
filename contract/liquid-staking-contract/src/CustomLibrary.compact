@@ -1,6 +1,6 @@
 module CustomLibrary {
     import CompactStandardLibrary;
-    export {Metadata, mintToken, delegateAssets, public_key, State, nonce, uniqueIndex, totalstDust, TVL};
+    export {StakeInfo, mintToken, delegateAssets, public_key, State, nonce, uniqueIndex, totalstDust, TVL};
 
     export ledger totalstDust: Uint<128>; // keeps track of stDust in circulation
     export ledger TVL: Uint<128>; // keeps track of total value locked
@@ -9,7 +9,7 @@ module CustomLibrary {
         
     enum State { active, closed };
 
-    struct Metadata {
+    struct StakeInfo {
         staker: Bytes<32>;
         stakedAmount: Uint<64>;
         status: State;
