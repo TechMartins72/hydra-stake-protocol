@@ -1,0 +1,41 @@
+module CustomLibrary {
+    import CompactStandardLibrary;
+    export {Metadata, mintToken, delegateAssets, public_key, State, nonce, uniqueIndex, totalstDust, TVL};
+
+    export ledger totalstDust: Uint<128>; // keeps track of stDust in circulation
+    export ledger TVL: Uint<128>; // keeps track of total value locked
+    export ledger uniqueIndex: Counter;
+    export ledger nonce: Bytes<32>;
+        
+    enum State { active, closed };
+
+    struct Metadata {
+        staker: Bytes<32>;
+        stakedAmount: Uint<64>;
+        status: State;
+        stakeTime: Uint<64>;
+        closedDate: Uint<64>;
+    };  
+        
+    circuit mintToken(amount: Uint<64>) :[] {
+        const disclosedAmount = disclose(amount);
+        const newNonce = evolveNonce(uniqueIndex, nonce);
+
+        mintToken(
+        pad(32, "tkDUST-token-seperator"),
+        disclose(disclosedAmount),
+        newNonce,
+        left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey())
+        );
+        uniqueIndex.increment(1);
+        totalstDust = disclosedAmount + totalstDust as Uint<128>;
+    }
+
+    circuit delegateAssets(): [] {
+        return ;
+    }
+
+    circuit public_key(sk: Bytes<32>): Bytes<32> {
+        return persistentHash<Vector<2, Bytes<32>>>([pad(32, "mn-liquidstake"), sk]);
+    }
+}

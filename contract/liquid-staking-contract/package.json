@@ -1,0 +1,13 @@
+{
+  "name": "liquid-staking-protocol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "compact compile ./src/liquid-staking-protocol.compact src/managed/liquid-staking-protocol"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

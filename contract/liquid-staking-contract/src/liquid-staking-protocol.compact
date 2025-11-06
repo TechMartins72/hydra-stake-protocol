@@ -1,0 +1,93 @@
+pragma language_version >= 0.16.0 && <= 0.18.0;
+
+import CompactStandardLibrary;
+import "./CustomLibrary";
+
+export ledger stakesMetadata: Map<Bytes<32>, Metadata>; // keeps track of stakes and it current position: active or closed
+export ledger stakesVault: QualifiedCoinInfo; // keeps track of stDust in circulation
+export ledger tokenToBurn: QualifiedCoinInfo; // keeps track of stDust in circulation
+
+constructor(initialNonce: Bytes<32>) {
+    nonce = disclose(initialNonce);
+    uniqueIndex.increment(1);
+}
+
+witness local_secret_key(): Bytes<32>;
+witness generateStakeId(): Bytes<32>;
+witness getTime(): Uint<64>;
+witness getTotalValue(amount: Uint<64>, time: Uint<64>): Uint<64>;
+
+export circuit stakeAsset(coin: CoinInfo): [] {
+    assert (coin.value > 0, "Stake amount must be greater than 0");
+    
+    const disclosedCoin = disclose(coin);
+    const stakeTime = disclose(getTime());
+    const staker = disclose(public_key(local_secret_key()));
+    const stakedAmount = disclosedCoin.value as Uint<64>;
+
+    receive(disclosedCoin);
+
+    const coinInfo = mergeCoinImmediate(stakesVault, disclosedCoin);
+    stakesVault.writeCoin(coinInfo, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+
+    mintToken(stakedAmount);
+
+    TVL = stakedAmount + TVL as Uint<128>;
+
+    stakesMetadata.insert(disclose(generateStakeId()), Metadata {
+        staker,
+        stakedAmount,
+        State.active,
+        stakeTime,
+        closedDate: 0
+    });
+    return;
+}
+
+export circuit redeemAsset(coin: CoinInfo, stakeId: Bytes<32>): []  {
+    // receive the skDust token, stakeID
+    const disclosedCoin = disclose(coin);
+    const disclosedId = disclose(stakeId);
+    const disclosedAmount = disclose(disclosedCoin.value);
+
+    // confirm token type and stake existence and state
+    assert(disclosedCoin.color == stakesVault.color, "Unacceptable token");
+    const stakeExist = stakesMetadata.member(disclosedId);
+    assert (stakeExist, "This stake does not exist");
+    
+    const stakeInfo = stakesMetadata.lookup(disclosedId);
+    assert(stakeInfo.status == State.active, "This stake is closed");
+    assert(disclose(public_key(local_secret_key())) == stakeInfo.staker, "This stake does not belong to you");
+    // sned received stDUST to a burn address to reduce the amount of stDust in circulation
+    
+    receive(disclosedCoin);
+    tokenToBurn.writeCoin(disclosedCoin, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+    
+    const burnAdr = burnAddress();
+    send(tokenToBurn, burnAdr, disclosedAmount);
+
+    // send staked token back to user
+    const totalValue = disclose(getTotalValue(stakeInfo.stakedAmount, stakeInfo.stakeTime));
+    const sendResult = send(stakesVault, left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()), totalValue);
+    
+    sendResult.change.is_some && stakesVault.writeCoin(sendResult.change.value, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+    
+    TVL = TVL - totalValue;
+    return;
+}
+
+export circuit checkStakeReward(stakeId: Bytes<32>): Uint<64>  {
+    const disclosedId = disclose(stakeId);
+    const stakeExist = stakesMetadata.member(disclosedId);
+    assert(stakeExist, "This stake does not exist");
+    const stakeInfo = stakesMetadata.lookup(disclosedId);
+    assert(disclose(public_key(local_secret_key())) == stakeInfo.staker, "This stake does not belong to you");
+
+    const totalValue = disclose(getTotalValue(stakeInfo.stakedAmount, stakeInfo.stakeTime));
+
+    return totalValue - stakeInfo.stakedAmount;
+}
+
+export circuit addDailyReward(): [] {
+    // increases TVL by 0.1% daily
+}
