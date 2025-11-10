@@ -85,6 +85,7 @@
   },
   "devDependencies": {
     "@repo/liquid-staking-protocol-contract": "workspace:*",
+    "@repo/liquid-staking-api": "workspace:*",
     "@eslint/js": "^9.33.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/node": "^24.3.0",

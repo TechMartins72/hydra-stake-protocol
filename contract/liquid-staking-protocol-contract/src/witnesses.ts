@@ -23,9 +23,10 @@ export const witnesses = {
     LiquidStakingPrivateState,
     Uint8Array,
   ] => {
-    const randomId = uuidv4();
+    const randomId = uuidv4().replace(/-/g, "");
     const encoder = new TextEncoder();
-    const stakeId = encoder.encode(randomId);
+    const encoded = encoder.encode(randomId);
+    const stakeId = encoded.slice(0, 32);
     return [privateState, stakeId];
   },
   getTime: ({

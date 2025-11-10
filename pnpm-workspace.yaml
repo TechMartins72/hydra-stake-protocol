@@ -4,3 +4,5 @@ packages:
   - "liquid-staking-protocol-ui"
   - "contract/liquid-staking-protocol-contract"
   - "liquid-staking-protocol-server"
+  - "liquid-staking-api"
+  - "liquid-staking-cli"

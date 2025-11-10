@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -8,12 +8,27 @@ import { DappContext } from "./contextProviders/DappContextProvider";
 import HistoryPage from "./components/History";
 import StakeDetailPage from "./components/StakeDetails";
 import { MidnightWalletContext } from "./contextProviders/MidnightWalletProvider";
-import { DeployedContractProvider } from "./contextProviders/DeployedContractProvider";
 import UnauthenticatedPage from "./components/UnauthenticatedPage";
+import { DeployedContractContext } from "./contextProviders/DeployedContractProvider";
 
 function App() {
+  const { hasConnected, providers } = useContext(MidnightWalletContext)!;
+  const { joinContract } = useContext(DeployedContractContext)!;
+
+  useEffect(() => {
+    if (!hasConnected) {
+      return;
+    }
+    console.log("Joining Contract");
+    const deploy = async () => {
+      await joinContract();
+    };
+
+    deploy(); 
+  }, [hasConnected, providers]);
+
   const { notification, setNotification, route } = useContext(DappContext)!;
-  const { hasConnected } = useContext(MidnightWalletContext)!;
+
   const [isStakingOpen, setIsStakingOpen] = useState(false);
 
   const handleStakeClick = () => setIsStakingOpen(true);
@@ -25,21 +40,19 @@ function App() {
   };
 
   return hasConnected ? (
-    <DeployedContractProvider>
-      <>
-        <Header />
-        {route === "dashboard" && <Dashboard onStakeClick={handleStakeClick} />}
-        {route === "history" && <HistoryPage />}
-        {route === "stakedetails" && <StakeDetailPage />}
-        <StakingModal
-          isOpen={isStakingOpen}
-          onClose={() => setIsStakingOpen(false)}
-          onComplete={handleStakingComplete}
-        />
-        <NotificationCenter notification={notification} />
-        <Footer />
-      </>
-    </DeployedContractProvider>
+    <>
+      <Header />
+      {route === "dashboard" && <Dashboard onStakeClick={handleStakeClick} />}
+      {route === "history" && <HistoryPage />}
+      {route === "stakedetails" && <StakeDetailPage />}
+      <StakingModal
+        isOpen={isStakingOpen}
+        onClose={() => setIsStakingOpen(false)}
+        onComplete={handleStakingComplete}
+      />
+      <NotificationCenter notification={notification} />
+      <Footer />
+    </>
   ) : (
     <>
       <UnauthenticatedPage />

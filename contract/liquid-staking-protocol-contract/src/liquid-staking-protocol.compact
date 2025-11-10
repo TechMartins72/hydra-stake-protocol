@@ -2,6 +2,7 @@ pragma language_version >= 0.16.0 && <= 0.18.0;
 
 import CompactStandardLibrary;
 import "./CustomLibrary";
+export { CoinInfo };
 
 export ledger stakes: Map<Bytes<32>, StakeInfo>; // keeps track of stakes and it current position: active or closed
 export ledger stakesVault: QualifiedCoinInfo; // keeps track of staked tDust
@@ -27,8 +28,8 @@ export circuit stakeAsset(coin: CoinInfo): [] {
 
     receive(disclosedCoin);
 
-    const coinInfo = mergeCoinImmediate(stakesVault, disclosedCoin);
-    stakesVault.writeCoin(coinInfo, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+    const mergedCoinInfo = mergeCoinImmediate(stakesVault, disclosedCoin);
+    stakesVault.writeCoin(mergedCoinInfo, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
 
     mintToken(stakedAmount);
 

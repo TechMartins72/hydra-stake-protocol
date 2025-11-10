@@ -1,10 +1,10 @@
 import { connectWallet } from "../lib/deploymentAction";
-import type { WalletAPI } from "../lib/common-types";
 import {
+  type WalletAPI,
   type LiquidStakingCircuitKeys,
   LiquidStakingPrivateStateKey,
   type LiquidStakingContractProvider,
-} from "../lib/common-types";
+} from "@repo/liquid-staking-api";
 import type { Logger } from "pino";
 import {
   createContext,
@@ -43,7 +43,6 @@ import { noProofClient, proofClient } from "./proofProvider";
 import { WrappedZKConfigProvider } from "./zkConfigProvider";
 import type { LiquidStakingPrivateState } from "@repo/liquid-staking-protocol-contract";
 import { DappContext } from "./DappContextProvider";
-import { DeployedContractContext } from "./DeployedContractProvider";
 
 interface WalletAPIType extends WalletAPI {
   address: string | undefined;
@@ -87,7 +86,6 @@ const MidnightWalletProvider = ({
   logger,
 }: PropsWithChildren<{ logger: Logger }>) => {
   const { setNotification } = useContext(DappContext)!;
-  // const { onDeployContract } = useContext(DeployedContractContext)!;
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [hasConnected, setHasConnected] = useState<boolean>(false);
   const [walletAPI, setWalletAPI] = useState<WalletAPIType | undefined>();
@@ -407,6 +405,8 @@ const MidnightWalletProvider = ({
       walletProvider,
       proofProvider,
     };
+
+    console.log({ newProviders });
 
     setProviders(newProviders);
     console.log("Updated providers", newProviders);

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { X, Check, ChevronRight } from "lucide-react";
 import ModalStep from "./ModalSteps";
+import { DeployedContractContext } from "@/contextProviders/DeployedContractProvider";
+import { LiquidStakingAPI } from "@repo/liquid-staking-api";
 
 interface StakingModalProps {
   isOpen: boolean;
@@ -11,9 +13,11 @@ interface StakingModalProps {
 type StepType = "amount" | "confirm" | "processing" | "complete";
 
 const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
+  const { deployedLiquidStakingApi } = useContext(DeployedContractContext)!;
   const [currentStep, setCurrentStep] = useState<StepType>("amount");
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [transactionId, setTransactionId] = useState<string>("");
 
   if (!isOpen) return null;
 
@@ -28,13 +32,23 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
       setCurrentStep("processing");
       setIsProcessing(true);
 
-      // Simulate processing
-      setTimeout(() => {
+      if (!deployedLiquidStakingApi) {
+        return;
+      }
+
+      try {
+        const txData = await LiquidStakingAPI.stakeAsset(
+          Number(amount),
+          deployedLiquidStakingApi.deployedContract
+        );
+        setTransactionId(txData.public.txHash);
+      } catch (error) {
+        console.log({ error });
+      } finally {
         setIsProcessing(false);
-        setCurrentStep("complete");
-      }, 2000);
+      }
     } else if (currentStep === "complete") {
-      onComplete(true, `Successfully staked ${amount} ETH!`);
+      onComplete(true, `Successfully staked ${amount} tDUST!`);
       handleReset();
     }
   };
@@ -55,10 +69,10 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
     currentStep === "amount"
       ? 33
       : currentStep === "confirm"
-      ? 66
-      : currentStep === "complete"
-      ? 100
-      : 80;
+        ? 66
+        : currentStep === "complete"
+          ? 100
+          : 80;
 
   return (
     <>
@@ -115,7 +129,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      Amount (ETH)
+                      Amount (tDUST)
                     </label>
                     <div className="relative">
                       <input
@@ -126,36 +140,30 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                         className="w-full px-4 py-3 bg-card border border-border/50 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                        ETH
+                        tDUST
                       </span>
                     </div>
                   </div>
 
                   <div className="bg-card/50 rounded-lg p-3">
-                    <div className="flex justify-between items-center text-sm mb-2">
-                      <span className="text-muted-foreground">Available:</span>
-                      <span className="text-foreground font-semibold">
-                        10.5 ETH
-                      </span>
-                    </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setAmount("1")}
+                        onClick={() => setAmount("100")}
                         className="flex-1 py-2 text-xs bg-border/50 hover:bg-border rounded transition-all text-foreground cursor-pointer"
                       >
-                        1 ETH
+                        100 tDUST
                       </button>
                       <button
-                        onClick={() => setAmount("5")}
+                        onClick={() => setAmount("500")}
                         className="flex-1 py-2 text-xs bg-border/50 hover:bg-border rounded transition-all text-foreground cursor-pointer"
                       >
-                        5 ETH
+                        500 tDUST
                       </button>
                       <button
-                        onClick={() => setAmount("10.5")}
+                        onClick={() => setAmount("1000")}
                         className="flex-1 py-2 text-xs bg-border/50 hover:bg-border rounded transition-all text-foreground cursor-pointer"
                       >
-                        Max
+                        1000
                       </button>
                     </div>
                   </div>
@@ -164,7 +172,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                     <p className="text-accent">
                       <span className="font-semibold">Est. Annual Yield:</span>{" "}
                       {amount &&
-                        `${(Number.parseFloat(amount) * 0.184).toFixed(2)} ETH`}
+                        `${(Number.parseFloat(amount) * 0.184).toFixed(2)} tDUST`}
                     </p>
                   </div>
                 </div>
@@ -183,7 +191,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                         Amount to Stake
                       </span>
                       <span className="text-foreground font-semibold">
-                        {amount} ETH
+                        {amount} tDUST
                       </span>
                     </div>
                     <div className="border-t border-border/30" />
@@ -199,7 +207,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                         Est. Annual Rewards
                       </span>
                       <span className="text-accent font-semibold">
-                        {(Number.parseFloat(amount) * 0.184).toFixed(2)} ETH
+                        {(Number.parseFloat(amount) * 0.184).toFixed(2)} tDUST
                       </span>
                     </div>
                   </div>
@@ -240,7 +248,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                     <Check className="w-8 h-8 text-accent" />
                   </div>
                   <p className="text-center text-foreground font-semibold mb-4">
-                    {amount} ETH successfully staked
+                    {amount} tDUST successfully staked
                   </p>
                   <div className="w-full bg-card/50 rounded-lg p-3 text-sm space-y-2">
                     <div className="flex justify-between">
@@ -248,7 +256,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                         Transaction Hash:
                       </span>
                       <span className="text-accent text-xs font-mono">
-                        0x123...abc
+                        {transactionId.substring(0, 10) + "***"}
                       </span>
                     </div>
                     <div className="flex justify-between">

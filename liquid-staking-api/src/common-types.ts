@@ -15,7 +15,7 @@ import type {
   DAppConnectorWalletAPI,
   ServiceUriConfig,
 } from "@midnight-ntwrk/dapp-connector-api";
-import type { DeployedLiquidStakingAPI } from "./deploymentAction";
+import type { DeployedLiquidStakingAPI, LiquidStakingAPI } from "./index";
 
 export interface WalletAndProvider {
   readonly wallet: DAppConnectorWalletAPI;
@@ -45,7 +45,7 @@ export type LiquidStakingContractProvider = MidnightProviders<
 >;
 
 export type DeployedLiquidStakingContract =
-  DeployedContract<LiquidStakingContract>;
+  FoundContract<LiquidStakingContract>;
 
 export interface WalletAndProvider {
   readonly wallet: DAppConnectorWalletAPI;
@@ -62,7 +62,7 @@ export interface WalletAPI {
 
 export interface LiquidStakingDeployment {
   status: "inprogress" | "deployed" | "failed";
-  api: DeployedLiquidStakingAPI;
+  api: LiquidStakingAPI;
 }
 
 export interface StakesInfoType {
