@@ -12,8 +12,8 @@ export type HydraStakePrivateState = {
 };
 
 export interface LedgerMapItem<T> {
-  key: Uint8Array; // User public key
-  state: T; // Diff. stake with specific coin
+  key: Uint8Array;
+  state: T; 
 }
 
 export interface LedgerMap<T> {
