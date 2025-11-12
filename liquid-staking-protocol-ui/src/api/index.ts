@@ -8,7 +8,7 @@ import {
   pureCircuits,
   type Ledger,
   type CoinInfo,
-} from "@repo/liquid-staking-protocol-contract";
+} from "@repo/hydra-stake-protocol";
 import {
   type DeployedHydraStakeContract,
   type DerivedState,
@@ -33,9 +33,7 @@ import {
 } from "@midnight-ntwrk/midnight-js-contracts";
 import { nativeToken } from "@midnight-ntwrk/ledger";
 
-const HydraStakeContractInstance: HydraStakeContract = new Contract(
-  witnesses
-);
+const HydraStakeContractInstance: HydraStakeContract = new Contract(witnesses);
 
 export interface DeployedHydraStakeAPI {
   readonly deployedContractAddress: ContractAddress;
@@ -68,7 +66,7 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
       ],
       // ...and combine them to produce the required derived state.
       (ledgerState, privateState) => {
-        const user_pk = toHex(pureCircuits.public_key(privateState.secretKey));
+        const user_pk = toHex(pureCircuits(privateState.secretKey));
 
         return {
           stakes: getStakesInfo(ledgerState.stakes),
@@ -82,13 +80,15 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
     providers: HydraStakeContractProvider
   ) => {
     try {
-      let deployedHydraStakeContract =
-        await deployContract<HydraStakeContract>(providers, {
+      let deployedHydraStakeContract = await deployContract<HydraStakeContract>(
+        providers,
+        {
           contract: HydraStakeContractInstance,
           initialPrivateState: await this.getPrivateState(providers),
           privateStateId: HydraStakePrivateStateKey,
           args: [randomNonceBytes(32)],
-        });
+        }
+      );
       console.log("Contract Deployed");
 
       return new HydraStakeAPI(providers, deployedHydraStakeContract);
@@ -119,14 +119,14 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
   static async stakeAsset(
     amount: number,
     deployedContract: DeployedHydraStakeContract
-  ): Promise<FinalizedCallTxData<HydraStakeContract, "stakeAsset">> {
+  ): Promise<FinalizedCallTxData<HydraStakeContract, "stake">> {
     const coin: CoinInfo = {
       nonce: randomNonceBytes(32),
       color: encodeTokenType(nativeToken()),
       value: BigInt(amount),
     };
 
-    return await deployedContract.callTx.stakeAsset(coin);
+    return await deployedContract.callTx.stake(coin);
   }
 
   static async redeemAsset(
@@ -134,14 +134,14 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
     amount: number,
     stakeId: string,
     deployedContract: DeployedHydraStakeContract
-  ): Promise<FinalizedCallTxData<HydraStakeContract, "redeemAsset">> {
+  ): Promise<FinalizedCallTxData<HydraStakeContract, "redeem">> {
     const coin = {
       nonce: randomNonceBytes(32),
       color: encodeTokenType(color),
       value: BigInt(amount),
     };
 
-    return await deployedContract.callTx.redeemAsset(
+    return await deployedContract.callTx.redeem(
       coin,
       stringTo32ByteArray(stakeId)
     );
@@ -154,8 +154,7 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
       HydraStakePrivateStateKey
     );
     return (
-      existingPrivateState ??
-      createHydraStakePrivateState(randomNonceBytes(32))
+      existingPrivateState ?? createHydraStakePrivateState(randomNonceBytes(32))
     );
   }
 

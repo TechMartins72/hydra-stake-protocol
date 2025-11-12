@@ -9,7 +9,7 @@
     "check-types": "turbo run check-types"
   },
   "dependencies": {
-    "@midnight-ntwrk/compact-runtime": "^0.9.0",
+    "@midnight-ntwrk/compact-runtime": "^0.8.1",
     "@midnight-ntwrk/dapp-connector-api": "^3.0.0",
     "@midnight-ntwrk/ledger": "^4.0.0",
     "@midnight-ntwrk/midnight-js-contracts": "^2.0.2",
@@ -25,6 +25,8 @@
     "@midnight-ntwrk/wallet": "^5.0.0",
     "@midnight-ntwrk/wallet-api": "^5.0.0",
     "@midnight-ntwrk/wallet-sdk-address-format": "^2.0.0",
+    "@midnight-ntwrk/wallet-sdk-hd": "^2.0.0",
+    "@midnight-ntwrk/zswap": "^4.0.0",
     "fp-ts": "^2.16.11",
     "io-ts": "^2.2.22",
     "rxjs": "^7.8.2",
@@ -34,11 +36,24 @@
   },
   "devDependencies": {
     "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
     "turbo": "^2.6.0",
     "typescript": "5.9.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "@midnight-ntwrk/onchain-runtime": "^0.3.0",
+      "@midnight-ntwrk/zswap": "4.0.0"
+    }
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=22"
-  }
+  },
+  "workspaces": [
+    "liquid-staking-cli",
+    "liquid-staking-protocol-ui",
+    "contract/liquid-staking-contract",
+    "server"
+  ]
 }

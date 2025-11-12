@@ -2,7 +2,7 @@ import {
   Contract,
   type HydraStakePrivateState,
   type Witnesses,
-} from "@repo/liquid-staking-protocol-contract";
+} from "@repo/hydra-stake-protocol";
 import type {
   DeployedContract,
   FoundContract,

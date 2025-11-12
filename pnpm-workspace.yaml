@@ -2,7 +2,6 @@ packages:
   - "apps/*"
   - "packages/*"
   - "liquid-staking-protocol-ui"
-  - "contract/liquid-staking-protocol-contract"
+  - "contract/liquid-staking-contract"
   - "liquid-staking-protocol-server"
-  - "liquid-staking-api"
   - "liquid-staking-cli"
