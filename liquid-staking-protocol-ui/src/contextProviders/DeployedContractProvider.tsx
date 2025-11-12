@@ -1,6 +1,6 @@
 import {
-  LiquidStakingAPI,
-  type DeployedLiquidStakingAPI,
+  HydraStakeAPI,
+  type DeployedHydraStakeAPI,
   type DerivedState,
 } from "@repo/liquid-staking-api";
 
@@ -17,7 +17,7 @@ import { DappContext } from "./DappContextProvider";
 export interface DeploymentProvider {
   readonly isJoining: boolean;
   readonly hasJoined: boolean;
-  readonly deployedLiquidStakingApi: LiquidStakingAPI | undefined;
+  readonly deployedHydraStakeApi: HydraStakeAPI | undefined;
   readonly contractState: DerivedState | undefined;
   joinContract: () => Promise<void>;
 }
@@ -35,8 +35,8 @@ export const DeployedContractProvider = ({
   children,
   logger,
 }: DeployedContractProviderProps) => {
-  const [deployedLiquidStakingApi, setDeployedLiquidStakingApi] = useState<
-    LiquidStakingAPI | undefined
+  const [deployedHydraStakeApi, setDeployedHydraStakeApi] = useState<
+    HydraStakeAPI | undefined
   >(undefined);
   const [isJoining, setIsJoining] = useState<boolean>(false);
   const [contractState, setContractState] = useState<DerivedState | undefined>(
@@ -68,11 +68,11 @@ export const DeployedContractProvider = ({
     setNotification(null);
 
     try {
-      const deployedAPI = await LiquidStakingAPI.joinLiquidStakingContract(
+      const deployedAPI = await HydraStakeAPI.joinHydraStakeContract(
         providers,
         "020072d746dbec791445f9a69a2b8290a51f7dde8e46a7ad1aea92ad74dfe0b2ea5c"
       );
-      setDeployedLiquidStakingApi(deployedAPI);
+      setDeployedHydraStakeApi(deployedAPI);
       setNotification({
         type: "success",
         message: "Contract joined Successfully",
@@ -95,7 +95,7 @@ export const DeployedContractProvider = ({
   const contextValue: DeploymentProvider = {
     isJoining,
     hasJoined,
-    deployedLiquidStakingApi,
+    deployedHydraStakeApi,
     joinContract,
     contractState,
   };

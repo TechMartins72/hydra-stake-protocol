@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { X, Check, ChevronRight } from "lucide-react";
 import ModalStep from "./ModalSteps";
 import { DeployedContractContext } from "@/contextProviders/DeployedContractProvider";
-import { LiquidStakingAPI } from "@repo/liquid-staking-api";
+import { HydraStakeAPI } from "@repo/liquid-staking-api";
 
 interface StakingModalProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface StakingModalProps {
 type StepType = "amount" | "confirm" | "processing" | "complete";
 
 const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
-  const { deployedLiquidStakingApi } = useContext(DeployedContractContext)!;
+  const { deployedHydraStakeApi } = useContext(DeployedContractContext)!;
   const [currentStep, setCurrentStep] = useState<StepType>("amount");
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,14 +32,14 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
       setCurrentStep("processing");
       setIsProcessing(true);
 
-      if (!deployedLiquidStakingApi) {
+      if (!deployedHydraStakeApi) {
         return;
       }
 
       try {
-        const txData = await LiquidStakingAPI.stakeAsset(
+        const txData = await HydraStakeAPI.stakeAsset(
           Number(amount),
-          deployedLiquidStakingApi.deployedContract
+          deployedHydraStakeApi.deployedContract
         );
         setTransactionId(txData.public.txHash);
       } catch (error) {

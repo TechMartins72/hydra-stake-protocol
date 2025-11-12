@@ -3,7 +3,7 @@ import {
   NetworkId,
   setNetworkId,
 } from "@midnight-ntwrk/midnight-js-network-id";
-import { LiquidStakingPrivateStateKey } from "@repo/liquid-staking-api";
+import { HydraStakePrivateStateKey } from "@repo/liquid-staking-api";
 import { fileURLToPath } from "node:url";
 
 export interface Config {
@@ -23,7 +23,7 @@ export interface Config {
 export const currentDir = dirname(fileURLToPath(import.meta.url));
 
 export class TestnetRemoteConfig implements Config {
-  privateStateStoreName = LiquidStakingPrivateStateKey;
+  privateStateStoreName = HydraStakePrivateStateKey;
   logDir = path.resolve(
     currentDir,
     "..",

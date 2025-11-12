@@ -1,7 +1,7 @@
 import { levelPrivateStateProvider } from "@midnight-ntwrk/midnight-js-level-private-state-provider";
 import { stdin as input, stdout as output } from "node:process";
 import { createInterface, Interface } from "node:readline/promises";
-import { DerivedState, LiquidStakingAPI } from "@repo/liquid-staking-api";
+import { DerivedState, HydraStakeAPI } from "@repo/liquid-staking-api";
 import { toHex } from "@midnight-ntwrk/midnight-js-utils";
 import { type Config } from "./config.js";
 import {
@@ -32,7 +32,7 @@ import { httpClientProofProvider } from "@midnight-ntwrk/midnight-js-http-client
 import * as fs from "node:fs";
 import { streamToString } from "testcontainers/build/common/streams.js";
 import { webcrypto } from "node:crypto";
-import { LiquidStakingContractProvider } from "@repo/liquid-staking-api";
+import { HydraStakeContractProvider } from "@repo/liquid-staking-api";
 
 const DEPLOY_OR_JOIN_QUESTION = `
     You can do one of the following:
@@ -56,10 +56,10 @@ Please select your action:
   3. Exit \n`;
 
 const resolve = async (
-  providers: LiquidStakingContractProvider,
+  providers: HydraStakeContractProvider,
   rli: Interface
-): Promise<LiquidStakingAPI | undefined> => {
-  let api: LiquidStakingAPI | undefined;
+): Promise<HydraStakeAPI | undefined> => {
+  let api: HydraStakeAPI | undefined;
 
   const choice = await rli.question(
     "Do you want to join or deploy a contract? \n"
@@ -68,7 +68,7 @@ const resolve = async (
   switch (choice) {
     case "deploy":
       {
-        api = await LiquidStakingAPI.deployLiquidStakingContract(providers);
+        api = await HydraStakeAPI.deployHydraStakeContract(providers);
         console.log(
           `Deployed contract at address: ${api?.deployedContractAddress}`
         );
@@ -77,7 +77,7 @@ const resolve = async (
 
       break;
     case "join": {
-      api = await LiquidStakingAPI.joinLiquidStakingContract(
+      api = await HydraStakeAPI.joinHydraStakeContract(
         providers,
         "02009fbf069c9273d80c210230c54c8a3ea534fb0fcfa165c4d87204ffe766e13881"
       );
@@ -99,7 +99,7 @@ const resolve = async (
 
 const circuit_main_loop = async (
   wallet: Wallet & Resource,
-  providers: LiquidStakingContractProvider,
+  providers: HydraStakeContractProvider,
   rli: Interface
 ): Promise<void> => {
   try {
@@ -115,7 +115,7 @@ const circuit_main_loop = async (
         case "1": {
           const amount = Number(await rli.question("Enter Amount to stake\n"));
           try {
-            const data = await LiquidStakingAPI.stakeAsset(
+            const data = await HydraStakeAPI.stakeAsset(
               amount,
               deployedAPI.deployedContract
             );

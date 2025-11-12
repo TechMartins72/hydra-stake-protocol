@@ -1,9 +1,9 @@
 import { connectWallet } from "../lib/deploymentAction";
 import {
   type WalletAPI,
-  type LiquidStakingCircuitKeys,
-  LiquidStakingPrivateStateKey,
-  type LiquidStakingContractProvider,
+  type HydraStakeCircuitKeys,
+  HydraStakePrivateStateKey,
+  type HydraStakeContractProvider,
 } from "@repo/liquid-staking-api";
 import type { Logger } from "pino";
 import {
@@ -41,7 +41,7 @@ import {
 import { Transaction } from "@midnight-ntwrk/ledger";
 import { noProofClient, proofClient } from "./proofProvider";
 import { WrappedZKConfigProvider } from "./zkConfigProvider";
-import type { LiquidStakingPrivateState } from "@repo/liquid-staking-protocol-contract";
+import type { HydraStakePrivateState } from "@repo/liquid-staking-protocol-contract";
 import { DappContext } from "./DappContextProvider";
 
 interface WalletAPIType extends WalletAPI {
@@ -54,7 +54,7 @@ export interface MidnightWalletState {
   readonly hasConnected: boolean;
   readonly coinPublicKey: string | undefined;
   readonly encryptionPublicKey: string | undefined;
-  readonly providers: LiquidStakingContractProvider | undefined;
+  readonly providers: HydraStakeContractProvider | undefined;
   readonly walletAPI: WalletAPIType | undefined;
   readonly error: string | null;
 }
@@ -64,15 +64,15 @@ export type MidnightWalletContextType = {
   isConnecting: boolean;
   hasConnected: boolean;
   state: MidnightWalletState;
-  providers: LiquidStakingContractProvider | undefined;
+  providers: HydraStakeContractProvider | undefined;
   privateStateProvider: PrivateStateProvider<
-    typeof LiquidStakingPrivateStateKey,
-    LiquidStakingPrivateState
+    typeof HydraStakePrivateStateKey,
+    HydraStakePrivateState
   >;
   publicDataProvider: PublicDataProvider;
   midnightProvider: MidnightProvider;
   walletProvider: WalletProvider;
-  zkConfigProvider: ZKConfigProvider<LiquidStakingCircuitKeys>;
+  zkConfigProvider: ZKConfigProvider<HydraStakeCircuitKeys>;
   checkProofServerStatus: (uri: string) => Promise<void>;
   proofProvider: ProofProvider<string>;
   disconnect: () => Promise<void>;
@@ -91,7 +91,7 @@ const MidnightWalletProvider = ({
   const [walletAPI, setWalletAPI] = useState<WalletAPIType | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [providers, setProviders] = useState<
-    LiquidStakingContractProvider | undefined
+    HydraStakeContractProvider | undefined
   >(undefined);
   const [walletState, setWalletState] = useState<MidnightWalletState>({
     address: undefined,
@@ -135,7 +135,7 @@ const MidnightWalletProvider = ({
     () =>
       new PrivateStateProviderWrapper(
         levelPrivateStateProvider({
-          privateStateStoreName: LiquidStakingPrivateStateKey,
+          privateStateStoreName: HydraStakePrivateStateKey,
         }),
         logger
       ),
@@ -205,7 +205,7 @@ const MidnightWalletProvider = ({
 
   const zkConfigProvider = useMemo(
     () =>
-      new WrappedZKConfigProvider<LiquidStakingCircuitKeys>(
+      new WrappedZKConfigProvider<HydraStakeCircuitKeys>(
         window.location.origin,
         fetch.bind(window)
       ),

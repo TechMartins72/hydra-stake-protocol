@@ -1,7 +1,7 @@
 import { map, Observable, combineLatest, from } from "rxjs";
 import {
-  createLiquidStakingPrivateState,
-  type LiquidStakingPrivateState,
+  createHydraStakePrivateState,
+  type HydraStakePrivateState,
   Contract,
   ledger,
   witnesses,
@@ -10,11 +10,11 @@ import {
   type CoinInfo,
 } from "@repo/liquid-staking-protocol-contract";
 import {
-  type DeployedLiquidStakingContract,
+  type DeployedHydraStakeContract,
   type DerivedState,
-  type LiquidStakingContract,
-  type LiquidStakingContractProvider,
-  LiquidStakingPrivateStateKey,
+  type HydraStakeContract,
+  type HydraStakeContractProvider,
+  HydraStakePrivateStateKey,
 } from "./common-types.js";
 import { toHex } from "@midnight-ntwrk/midnight-js-utils";
 import {
@@ -33,22 +33,22 @@ import {
 } from "@midnight-ntwrk/midnight-js-contracts";
 import { nativeToken } from "@midnight-ntwrk/ledger";
 
-const LiquidStakingContractInstance: LiquidStakingContract = new Contract(
+const HydraStakeContractInstance: HydraStakeContract = new Contract(
   witnesses
 );
 
-export interface DeployedLiquidStakingAPI {
+export interface DeployedHydraStakeAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<DerivedState>;
 }
 
-export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
+export class HydraStakeAPI implements DeployedHydraStakeAPI {
   public readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<DerivedState>;
 
   private constructor(
-    providers: LiquidStakingContractProvider,
-    public readonly deployedContract: DeployedLiquidStakingContract
+    providers: HydraStakeContractProvider,
+    public readonly deployedContract: DeployedHydraStakeContract
   ) {
     this.deployedContractAddress =
       deployedContract.deployTxData.public.contractAddress;
@@ -62,8 +62,8 @@ export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
           .pipe(map((contractState) => ledger(contractState.data))),
         from(
           providers.privateStateProvider.get(
-            LiquidStakingPrivateStateKey
-          ) as Promise<LiquidStakingPrivateState>
+            HydraStakePrivateStateKey
+          ) as Promise<HydraStakePrivateState>
         ),
       ],
       // ...and combine them to produce the required derived state.
@@ -78,39 +78,39 @@ export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
     );
   }
 
-  static deployLiquidStakingContract = async (
-    providers: LiquidStakingContractProvider
+  static deployHydraStakeContract = async (
+    providers: HydraStakeContractProvider
   ) => {
     try {
-      let deployedLiquidStakingContract =
-        await deployContract<LiquidStakingContract>(providers, {
-          contract: LiquidStakingContractInstance,
+      let deployedHydraStakeContract =
+        await deployContract<HydraStakeContract>(providers, {
+          contract: HydraStakeContractInstance,
           initialPrivateState: await this.getPrivateState(providers),
-          privateStateId: LiquidStakingPrivateStateKey,
+          privateStateId: HydraStakePrivateStateKey,
           args: [randomNonceBytes(32)],
         });
       console.log("Contract Deployed");
 
-      return new LiquidStakingAPI(providers, deployedLiquidStakingContract);
+      return new HydraStakeAPI(providers, deployedHydraStakeContract);
     } catch (error) {
       throw error;
     }
   };
 
-  static joinLiquidStakingContract = async (
-    providers: LiquidStakingContractProvider,
+  static joinHydraStakeContract = async (
+    providers: HydraStakeContractProvider,
     contractAddress: ContractAddress
   ) => {
     try {
       console.log("Joining Contract");
-      let deployedLiquidStakingContract =
-        await findDeployedContract<LiquidStakingContract>(providers, {
+      let deployedHydraStakeContract =
+        await findDeployedContract<HydraStakeContract>(providers, {
           contractAddress,
-          contract: LiquidStakingContractInstance,
-          privateStateId: LiquidStakingPrivateStateKey,
+          contract: HydraStakeContractInstance,
+          privateStateId: HydraStakePrivateStateKey,
           initialPrivateState: await this.getPrivateState(providers),
         });
-      return new LiquidStakingAPI(providers, deployedLiquidStakingContract);
+      return new HydraStakeAPI(providers, deployedHydraStakeContract);
     } catch (error) {
       console.log({ error });
     }
@@ -118,8 +118,8 @@ export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
 
   static async stakeAsset(
     amount: number,
-    deployedContract: DeployedLiquidStakingContract
-  ): Promise<FinalizedCallTxData<LiquidStakingContract, "stakeAsset">> {
+    deployedContract: DeployedHydraStakeContract
+  ): Promise<FinalizedCallTxData<HydraStakeContract, "stakeAsset">> {
     const coin: CoinInfo = {
       nonce: randomNonceBytes(32),
       color: encodeTokenType(nativeToken()),
@@ -133,8 +133,8 @@ export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
     color: string,
     amount: number,
     stakeId: string,
-    deployedContract: DeployedLiquidStakingContract
-  ): Promise<FinalizedCallTxData<LiquidStakingContract, "redeemAsset">> {
+    deployedContract: DeployedHydraStakeContract
+  ): Promise<FinalizedCallTxData<HydraStakeContract, "redeemAsset">> {
     const coin = {
       nonce: randomNonceBytes(32),
       color: encodeTokenType(color),
@@ -148,19 +148,19 @@ export class LiquidStakingAPI implements DeployedLiquidStakingAPI {
   }
 
   private static async getPrivateState(
-    providers: LiquidStakingContractProvider
-  ): Promise<LiquidStakingPrivateState> {
+    providers: HydraStakeContractProvider
+  ): Promise<HydraStakePrivateState> {
     const existingPrivateState = await providers.privateStateProvider.get(
-      LiquidStakingPrivateStateKey
+      HydraStakePrivateStateKey
     );
     return (
       existingPrivateState ??
-      createLiquidStakingPrivateState(randomNonceBytes(32))
+      createHydraStakePrivateState(randomNonceBytes(32))
     );
   }
 
-  static getLiquidStakingState = (
-    providers: LiquidStakingContractProvider,
+  static getHydraStakeState = (
+    providers: HydraStakeContractProvider,
     contractAddress: ContractAddress
   ): Promise<Ledger | null> =>
     providers.publicDataProvider
