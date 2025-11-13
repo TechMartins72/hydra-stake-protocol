@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "liquid-staking-protocol-ui"
-  - "contract/liquid-staking-contract"
-  - "liquid-staking-protocol-server"
-  - "liquid-staking-cli"
+  - "hydra-stake-ui"
+  - "contract/hydra-stake-contract"
+  - "hydra-stake-server"
+  - "hydra-stake-cli"

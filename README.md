@@ -1,10 +1,14 @@
-# My Seed
+# Seed 1
 
 0e44815a770be7f8245670152280c319bdbea3d2828bb5cb365919fd8d2faf0d
 
-# seed
+# Seed 2
 
 222fd38a35d3c998aaed1fedcc4dd73a9e395451fb1553a42a7e9ccd089ab59e
+
+# Main Contract Address
+
+0200f316ce75f58726350fb6277306273a6084523a269b0aebb0fd9c71dbb9217a3d
 
 # dummy contract address
 
@@ -53,3 +57,16 @@ The fist deployment of our app will be for tDUST. <!-- admin can create multiple
 - Add check user role by comparing the connected wallet coinPublickKey to the super admin key or the list of admins
 - return list of pool's contract address and their information
 - protocolTVL, total_rewards_accrued, total_stake_withdrawn, total_stAsset_Minted, validAssetCoinType, StakePrivateState, Stake, StakeStatus, stakings, QualifiedCoinInfo, CoinInfo, SCALE_FACTOR, admins, stakePoolStatus, StakePoolStatus
+
+# ON THE UI
+
+- I must join and keep the connection to every pool alive to retrieve data and to interact with them
+- On dom load, the dapp must join every pool to retrieve information about the pool: So we loop through the contracts saved on the ledger and map them to the pools name
+
+# ON POOL CARD
+
+When user clicks on a pool, the contract of the pool is joined and information about the pool is retrieved and displayed below
+
+Information about every contract is stored on ipfs, PINATA.
+
+When a user starts the dapp, they only connect wallet and not join the app yet until they want to display information about a particular pool by clicking on any among in the list or by initiating a transaction
