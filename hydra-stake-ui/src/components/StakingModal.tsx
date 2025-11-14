@@ -1,52 +1,73 @@
 import { useContext, useState } from "react";
 import { X, Check, ChevronRight } from "lucide-react";
 import ModalStep from "./ModalSteps";
-import { DeployedContractContext } from "@/contextProviders/DeployedContractProvider";
 import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
-import type { ContractAddress } from "@midnight-ntwrk/zswap";
+import { HydraStakeAPI } from "@/api";
 
-interface StakingModalProps {
-  isOpen: boolean;
+export interface StakingModalProps {
   onClose: () => void;
   onComplete: (success: boolean, message: string) => void;
+  action: "stake" | "redeem";
 }
 
-type StepType = "amount" | "confirm" | "processing" | "complete";
+export type StepType = "amount" | "confirm" | "processing" | "complete";
 
-const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
-  const { joinPool } = useContext(DeployedContractContext)!;
-  const { providers } = useContext(MidnightWalletContext)!;
+const StakingModal = ({ onClose, onComplete, action }: StakingModalProps) => {
+  const { deployedHydraStakeApi, contractState } = useContext(
+    MidnightWalletContext
+  )!;
   const [currentStep, setCurrentStep] = useState<StepType>("amount");
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [transactionId, setTransactionId] = useState<string>("");
 
-  if (!isOpen) return null;
-
-  const handleJoinPool = async () => {
+  const handleCreateStake = async () => {
     if (currentStep === "amount") {
       if (!amount || Number.parseFloat(amount) <= 0) {
         onComplete(false, "Please enter a valid amount");
         return;
       }
+
       setCurrentStep("confirm");
     } else if (currentStep === "confirm") {
+      if (!contractState || !deployedHydraStakeApi) {
+        return;
+      }
+
       setCurrentStep("processing");
       setIsProcessing(true);
-      try {
-        if (!providers) {
-          return;
-        }
-        console.log({ ca: process.env.VITE_CONTRACT_ADDRESS });
-        await joinPool(
-          import.meta.env.VITE_CONTRACT_ADDRESS as ContractAddress,
-          providers
-        );
-      } catch (error) {
-        console.log({ error });
-      } finally {
-        setIsProcessing(false);
+      await HydraStakeAPI.stakeAsset(
+        Number(amount) * contractState.SCALE_FACTOR,
+        deployedHydraStakeApi.deployedContract
+      );
+      setCurrentStep("complete");
+    } else if (currentStep === "complete") {
+      onComplete(true, `Successfully staked ${amount} tDUST!`);
+      handleReset();
+    }
+  };
+
+  const handleRedeemStake = async () => {
+    if (currentStep === "amount") {
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        onComplete(false, "Please enter a valid amount");
+        return;
       }
+
+      setCurrentStep("confirm");
+    } else if (currentStep === "confirm") {
+      if (!contractState || !deployedHydraStakeApi) {
+        return;
+      }
+
+      setCurrentStep("processing");
+      setIsProcessing(true);
+      await HydraStakeAPI.redeemAsset(
+        "sttasset coin color",
+        Number(amount) * contractState.SCALE_FACTOR,
+        deployedHydraStakeApi.deployedContract
+      );
+      setCurrentStep("complete");
     } else if (currentStep === "complete") {
       onComplete(true, `Successfully staked ${amount} tDUST!`);
       handleReset();
@@ -88,7 +109,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
           {/* Header */}
           <div className="border-b border-border/50 p-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-foreground">
-              Stake Your Assets
+              {action ? "Stake Your Assets" : "Redeem Your Asset"}
             </h2>
             <button
               onClick={handleReset}
@@ -124,7 +145,11 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
             {currentStep === "amount" && (
               <ModalStep
                 title="Enter Amount"
-                subtitle="How much would you like to stake?"
+                subtitle={
+                  action === "stake"
+                    ? "How much would you like to stake?"
+                    : "How much would you like to redeemm?"
+                }
               >
                 <div className="space-y-4">
                   <div>
@@ -168,54 +193,74 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                     </div>
                   </div>
 
-                  <div className="bg-accent/10 rounded-lg p-3 text-sm">
-                    <p className="text-accent">
-                      <span className="font-semibold">Est. Annual Yield:</span>{" "}
-                      {amount &&
-                        `${(Number.parseFloat(amount) * 0.184).toFixed(2)} tDUST`}
-                    </p>
-                  </div>
+                  {action === "stake" && (
+                    <div className="bg-accent/10 rounded-lg p-3 text-sm">
+                      <p className="text-accent">
+                        <span className="font-semibold">
+                          Est. Annual Yield:
+                        </span>{" "}
+                        {amount &&
+                          `${(Number.parseFloat(amount) * 0.184).toFixed(2)} tDUST`}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </ModalStep>
             )}
 
             {currentStep === "confirm" && (
               <ModalStep
-                title="Confirm Staking"
-                subtitle="Review your staking details"
+                title={
+                  action === "stake" ? "Confirm Staking" : "Confirm Redeem"
+                }
+                subtitle={
+                  action === "stake"
+                    ? "Review your staking details"
+                    : "Review your redeem details"
+                }
               >
                 <div className="space-y-4">
                   <div className="bg-card/50 rounded-lg p-4 space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
-                        Amount to Stake
+                        Amount to {action === "stake" ? "Stake" : "Redeem"}
                       </span>
                       <span className="text-foreground font-semibold">
                         {amount} tDUST
                       </span>
                     </div>
                     <div className="border-t border-border/30" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">
-                        Estimated APY
-                      </span>
-                      <span className="text-accent font-semibold">18.4%</span>
-                    </div>
-                    <div className="border-t border-border/30" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">
-                        Est. Annual Rewards
-                      </span>
-                      <span className="text-accent font-semibold">
-                        {(Number.parseFloat(amount) * 0.184).toFixed(2)} tDUST
-                      </span>
-                    </div>
+                    {action === "stake" && (
+                      <>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">
+                            Estimated APY
+                          </span>
+                          <span className="text-accent font-semibold">
+                            18.4%
+                          </span>
+                        </div>
+                        <div className="border-t border-border/30" />
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">
+                            Est. Annual Rewards
+                          </span>
+                          <span className="text-accent font-semibold">
+                            {(Number.parseFloat(amount) * 0.184).toFixed(2)}{" "}
+                            tDUST
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
 
-                  <div className="text-xs text-muted-foreground bg-secondary/20 rounded-lg p-3">
-                    By confirming, you agree to lock your assets for the staking
-                    period. Your rewards will be automatically compounded.
-                  </div>
+                  {action === "stake" && (
+                    <div className="text-xs text-muted-foreground bg-secondary/20 rounded-lg p-3">
+                      By confirming, you agree to lock your assets for the
+                      staking period. Your rewards will be automatically
+                      compounded.
+                    </div>
+                  )}
                 </div>
               </ModalStep>
             )}
@@ -223,7 +268,7 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
             {currentStep === "processing" && (
               <ModalStep
                 title="Processing"
-                subtitle="Your staking transaction is being processed"
+                subtitle={`Your ${action} transaction is being processed`}
               >
                 <div className="flex flex-col items-center justify-center py-8">
                   <div className="relative w-16 h-16 mb-4">
@@ -248,7 +293,8 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
                     <Check className="w-8 h-8 text-accent" />
                   </div>
                   <p className="text-center text-foreground font-semibold mb-4">
-                    {amount} tDUST successfully staked
+                    {amount} tDUST successfully{" "}
+                    {action === "stake" ? "staked" : "redeem"}
                   </p>
                   <div className="w-full bg-card/50 rounded-lg p-3 text-sm space-y-2">
                     <div className="flex justify-between">
@@ -282,7 +328,9 @@ const StakingModal = ({ isOpen, onClose, onComplete }: StakingModalProps) => {
               </button>
             )}
             <button
-              onClick={handleJoinPool}
+              onClick={
+                action === "stake" ? handleCreateStake : handleRedeemStake
+              }
               disabled={isProcessing}
               className={`flex-1 px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 isProcessing

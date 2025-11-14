@@ -2,14 +2,14 @@ import type React from "react";
 
 interface ModalStepProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: React.ReactNode;
 }
 
 export default function ModalStep({
   title,
-  subtitle,
   children,
+  subtitle,
 }: ModalStepProps) {
   return (
     <div>

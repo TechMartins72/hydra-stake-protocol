@@ -17,7 +17,7 @@ import type {
   DAppConnectorWalletAPI,
   ServiceUriConfig,
 } from "@midnight-ntwrk/dapp-connector-api";
-import type { HydraStakeAPI } from "./index";
+import type { HydraStakeAPI } from "./api.js";
 import type { ContractAddress } from "@midnight-ntwrk/zswap";
 
 export interface WalletAndProvider {
@@ -82,7 +82,8 @@ export type PoolType = Array<[ContractAddress, string]>;
 
 export type LedgerInfo = {
   userPk: string;
-  superAdmin: string;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
   total_stAsset_Minted: number;
   total_rewards_accrued: number;
   total_stake_withdrawn: number;

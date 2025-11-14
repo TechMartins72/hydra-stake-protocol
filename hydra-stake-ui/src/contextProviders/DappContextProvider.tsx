@@ -9,7 +9,7 @@ import type { NotificationType } from "../lib/types";
 
 export const DappContext = createContext<DappConfigType | null>(null);
 
-type routes = "dashboard" | "history" | "stakedetails";
+type routes = "dashboard" | "admin";
 
 interface DappConfigType {
   notification: {
@@ -24,12 +24,23 @@ interface DappConfigType {
   >;
   route: routes;
   setRoute: Dispatch<SetStateAction<routes>>;
+  openCreatePoolModal: boolean;
+  setOpenCreatePoolModal: Dispatch<SetStateAction<boolean>>;
+  isStakingOpen: boolean;
+  setIsStakingOpen: Dispatch<SetStateAction<boolean>>;
+  isOpenCreatePool: boolean;
+  setIsOpenCreatePool: Dispatch<SetStateAction<boolean>>;
 }
 
 const DappContextProvider: React.FC<Readonly<PropsWithChildren>> = ({
   children,
 }) => {
   const [route, setRoute] = useState<routes>("dashboard");
+  const [isStakingOpen, setIsStakingOpen] = useState(false);
+  const [isOpenCreatePool, setIsOpenCreatePool] = useState(false);
+
+  const [openCreatePoolModal, setOpenCreatePoolModal] =
+    useState<boolean>(false);
   const [notification, setNotification] = useState<{
     type: NotificationType;
     message: string;
@@ -40,6 +51,12 @@ const DappContextProvider: React.FC<Readonly<PropsWithChildren>> = ({
     setNotification,
     route,
     setRoute,
+    openCreatePoolModal,
+    setOpenCreatePoolModal,
+    isStakingOpen,
+    setIsStakingOpen,
+    isOpenCreatePool,
+    setIsOpenCreatePool,
   };
 
   return <DappContext.Provider value={value}>{children}</DappContext.Provider>;

@@ -148,25 +148,25 @@ export class HydraStakeAPI implements DeployedHydraStakeAPI {
     return await deployedContract.callTx.redeem(coin);
   }
 
-  static async setTokenColor(
-    deployedContract: DeployedHydraStakeContract
-  ): Promise<FinalizedCallTxData<HydraStakeContract, "setTokenColor">> {
-    return await deployedContract.callTx.setTokenColor();
-  }
+  // static async setTokenColor(
+  //   deployedContract: DeployedHydraStakeContract
+  // ): Promise<FinalizedCallTxData<HydraStakeContract, "setTokenColor">> {
+  //   return await deployedContract.callTx.setTokenColor();
+  // }
 
-  static async addAdmin(
-    userCPK: Uint8Array,
-    deployedContract: DeployedHydraStakeContract
-  ): Promise<FinalizedCallTxData<HydraStakeContract, "addNewAdmin">> {
-    return await deployedContract.callTx.addNewAdmin(userCPK);
-  }
+  // static async addAdmin(
+  //   userCPK: Uint8Array,
+  //   deployedContract: DeployedHydraStakeContract
+  // ): Promise<FinalizedCallTxData<HydraStakeContract, "addNewAdmin">> {
+  //   return await deployedContract.callTx.addNewAdmin(userCPK);
+  // }
 
-  static async removeAdmin(
-    userCPK: Uint8Array,
-    deployedContract: DeployedHydraStakeContract
-  ): Promise<FinalizedCallTxData<HydraStakeContract, "removeNewAdmin">> {
-    return await deployedContract.callTx.removeNewAdmin(userCPK);
-  }
+  // static async removeAdmin(
+  //   userCPK: Uint8Array,
+  //   deployedContract: DeployedHydraStakeContract
+  // ): Promise<FinalizedCallTxData<HydraStakeContract, "removeNewAdmin">> {
+  //   return await deployedContract.callTx.removeNewAdmin(userCPK);
+  // }
 
   static async getPrivateState(
     providers: HydraStakeContractProvider

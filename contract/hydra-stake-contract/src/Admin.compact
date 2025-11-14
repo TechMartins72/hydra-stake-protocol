@@ -4,9 +4,8 @@ module Admin {
 
     /** ADMIN FUNCTIONALITIES */
     /** Delegates protocol funds to third party  */
-    export circuit delegate(): Boolean{
-        const userPk = ownPublicKey().bytes;
-        assert (userPk == superAdmin || admins.member(userPk), "Unauthorized to delegate protocol asset");
+    export circuit delegate(adminAddress: Bytes<32>): Boolean{
+        assert (disclose(adminAddress) == superAdmin || admins.member(disclose(adminAddress)), "Unauthorized to delegate protocol asset");
         const delegationAmt = protocolTVL.value; //(TESTNING ONLY)
         send(protocolTVL, right<ZswapCoinPublicKey, ContractAddress>(
             ContractAddress {
@@ -20,25 +19,23 @@ module Admin {
     }
 
     /** Update admin access */
-    export circuit addNewAdmin(adminCpk: Bytes<32>): [] {
-        assert (ownPublicKey().bytes == superAdmin, "Unauthorized to add new admin");
+    export circuit addNewAdmin(adminAddress: Bytes<32>, newAdmin: Bytes<32>): [] {
+        assert (adminAddress == superAdmin, "Unauthorized to delegate protocol asset");
 
-        admins.insert(disclose(adminCpk));
+        admins.insert(disclose(newAdmin));
     }
 
-    export circuit setTokenColor(): []{
-        const userPk = ownPublicKey().bytes;
-        assert ( userPk == superAdmin || admins.member(userPk), "Unauthorized to add new admin");
+    export circuit setTokenColor(adminAddress: Bytes<32>): []{
+        assert (disclose(adminAddress) == superAdmin || admins.member(disclose(adminAddress)), "Unauthorized to set token color");
         /** Construct the coin color minted to each user 
         * Depend on the domain seperator specified
         */
         stAssetCoinColor = tokenType(stAssetDomainSeparator, kernel.self());
     }
 
-    export circuit removeNewAdmin(adminCpk: Bytes<32>): [] {
-        assert (ownPublicKey().bytes == superAdmin, "Unauthorized to add new admin");
+    export circuit removeNewAdmin(adminAddress: Bytes<32>, newAdmin: Bytes<32>): [] {
+        assert (adminAddress == superAdmin, "Unauthorized to delegate protocol asset");
 
-        admins.remove(disclose(adminCpk));
+        admins.remove(disclose(newAdmin));
     }
-
 }

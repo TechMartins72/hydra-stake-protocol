@@ -1,19 +1,38 @@
-import { Wallet, Settings, History, LogOut } from "lucide-react";
+import { Wallet, History, LogOut } from "lucide-react";
 import { DappContext } from "../contextProviders/DappContextProvider";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
 
 const Header = () => {
   const { setRoute, route } = useContext(DappContext)!;
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const {
     state: { hasConnected, isConnecting, address },
     connectFn,
     disconnect,
+    contractState,
   } = useContext(MidnightWalletContext)!;
+
+  useEffect(() => {
+    if (!contractState || !address) {
+      setIsAdmin(false);
+      setIsSuperAdmin(false);
+      return;
+    }
+
+    const superAdmin = contractState.superAdmin === address;
+    const admin = contractState.admins.some((admin) => admin === address);
+
+    console.log({ superAdmin, admin });
+
+    setIsSuperAdmin(superAdmin);
+    setIsAdmin(admin || superAdmin); // Super admins are also admins
+  }, [contractState, address]);
 
   return (
     <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 py-4 md:px-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto py-4 flex items-center justify-between">
         <div
           onClick={() => setRoute("dashboard")}
           className="flex items-center gap-3"
@@ -40,24 +59,25 @@ const Header = () => {
             >
               Dashboard
             </button>
+
             <button
               onClick={() => {
-                setRoute("history");
+                setRoute("admin");
               }}
               className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
-                route === "history"
+                route === "admin"
                   ? "bg-accent/20 text-accent"
                   : "text-muted-foreground hover:text-accent"
               }`}
             >
               <History className="w-4 h-4" />
-              History
+              Admin
             </button>
-          </div>
 
-          <button className="p-2 rounded-lg hover:bg-card transition-all cursor-pointer">
-            <Settings className="w-5 h-5 text-muted-foreground hover:text-accent transition-all" />
-          </button>
+            {/* <button className="p-2 rounded-lg hover:bg-card transition-all cursor-pointer">
+                  <Settings className="w-5 h-5 text-muted-foreground hover:text-accent transition-all" />
+                </button> */}
+          </div>
           <button
             onClick={connectFn}
             className="px-4 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all font-semibold text-sm cursor-pointer"

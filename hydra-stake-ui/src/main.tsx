@@ -11,7 +11,6 @@ import {
 } from "@midnight-ntwrk/midnight-js-network-id";
 import pino from "pino";
 import MidnightWalletProvider from "./contextProviders/MidnightWalletProvider.tsx";
-import { DeployedContractProvider } from "./contextProviders/DeployedContractProvider.tsx";
 
 const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
 setNetworkId(networkId);
@@ -24,9 +23,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <DappContextProvider>
       <MidnightWalletProvider logger={logger}>
-        <DeployedContractProvider>
-          <App />
-        </DeployedContractProvider>
+        <App />
       </MidnightWalletProvider>
     </DappContextProvider>
   </StrictMode>

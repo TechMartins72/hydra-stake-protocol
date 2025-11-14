@@ -83,7 +83,8 @@ export const getLedgerRefinedData = (
 
   const poolInfo: LedgerInfo = {
     userPk: toHex(userPk),
-    superAdmin: toHex(ledger.superAdmin),
+    isAdmin: ledger.admins.member(userPk),
+    isSuperAdmin: ledger.superAdmin === userPk,
     total_stAsset_Minted: Number(total_stAsset_Minted),
     total_rewards_accrued: Number(total_rewards_accrued),
     total_stake_withdrawn: Number(total_stake_withdrawn),

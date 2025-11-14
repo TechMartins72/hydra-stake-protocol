@@ -10,7 +10,7 @@ export {
      validAssetCoinType, StakePrivateState, Stake, StakeStatus, stakings,
      QualifiedCoinInfo, CoinInfo, SCALE_FACTOR, admins, stakePoolStatus, 
      StakePoolStatus, stAssetCoinColor, delegate, setTokenColor, removeNewAdmin, 
-     addNewAdmin
+     addNewAdmin, superAdmin
 };
 
 /** Initialize the contract with admin specified parameters */
@@ -19,21 +19,21 @@ constructor(
      initValidAssetCoinType: Bytes<32>, 
      initMintDomain: Bytes<32>,
      initDelegationContractAddress: Bytes<32>,
-     initScaleFactor: Uint<32>
+     initScaleFactor: Uint<32>,
+     initSuperAdmin: Bytes<32>
      ) {
      nonce = disclose(initialNonce);
      validAssetCoinType = disclose(initValidAssetCoinType);
      mintCounter.increment(1);
      stAssetDomainSeparator = disclose(initMintDomain);
      SCALE_FACTOR = disclose(initScaleFactor); // Specifies the scale factor based on coin type (e.g 1ETH = 1E18, tDUST = 1E6)
-     superAdmin = ownPublicKey().bytes;
+     superAdmin = disclose(initSuperAdmin);
      delegationContractAddress = disclose(initDelegationContractAddress);
 }
 
 /** STAKER FUNCTIONALITIES */
 export circuit stake(coin: CoinInfo): []{
      const disclosedCoin = disclose(coin);
-     const userPk = ownPublicKey().bytes;
      const stakerId = generateStakerId(disclose(secrete_key()));
      assert(disclosedCoin.color == validAssetCoinType, "The provided token type is not acceptable");
      assert (disclosedCoin.value > 0, "Insufficient Funds provide for staking");
@@ -44,11 +44,11 @@ export circuit stake(coin: CoinInfo): []{
      /** Handle funds sent to contract */
      recieveAndAddCoinToTvl(disclosedCoin);
      /** If user already has a stake position, then update their stake info */
-     if(stakings.member(userPk)){
-          const stake = stakings.lookup(userPk);
-          assert (stakerId == stake.staker_id, "Can not add to stake: You are not the oowner");
+     if(stakings.member(stakerId)){
+          const stake = stakings.lookup(stakerId);
+          assert (stakerId == stake.staker_id, "Can not add to stake: You are not the owner");
           const privateState = disclose(get_stake_private_state());
-          const stakeHash = generatePrivateStateHash(privateState, userPk);
+          const stakeHash = generatePrivateStateHash(privateState, stakerId);
           assert (stakeHash == stake.stake_hash, "Can not add to stake: You are not the owner");
 
           const updatedPrivatState = StakePrivateState {
@@ -59,8 +59,8 @@ export circuit stake(coin: CoinInfo): []{
           /** Update staker state onchain & offchain */
           update_stake_private_state(updatedPrivatState);
 
-          const newStakeHash = generatePrivateStateHash(updatedPrivatState, userPk);
-          stakings.insert(userPk, Stake {
+          const newStakeHash = generatePrivateStateHash(updatedPrivatState, stakerId);
+          stakings.insert(stakerId, Stake {
                ...stake,
                stake_hash: newStakeHash,
                status: StakeStatus.open
@@ -74,7 +74,7 @@ export circuit stake(coin: CoinInfo): []{
           /** Update staker's private state */
           update_stake_private_state(newPrivateState);
           
-          const newStakeHash = generatePrivateStateHash(newPrivateState, userPk);
+          const newStakeHash = generatePrivateStateHash(newPrivateState, stakerId);
           
           const newStake = Stake {
                ...default<Stake>,
@@ -83,7 +83,7 @@ export circuit stake(coin: CoinInfo): []{
                created_at: disclose(get_current_time())
           };
 
-          stakings.insert(userPk, newStake);
+          stakings.insert(stakerId, newStake);
      }
 }
 
@@ -91,10 +91,9 @@ export circuit redeem(coin: CoinInfo): []{
      /** Ensure that protocolTVL plus delegation reward is available for redemption */
      assert (stakePoolStatus == StakePoolStatus.available, "Delegation has already proceeded");
      const disclosedCoin = disclose(coin);
-     const userPk = ownPublicKey().bytes;
      const stakerId = generateStakerId(disclose(secrete_key()));
-     assert (stakings.member(userPk), "You do not have any stakes in the pool");
-     const stake = stakings.lookup(userPk);
+     assert (stakings.member(stakerId), "You do not have any stakes in the pool");
+     const stake = stakings.lookup(stakerId);
      assert (stake.status == StakeStatus.open, "Delegation has already proceeded");
      assert (stakerId == stake.staker_id, "Can not add to stake: You are not the owner");
 
@@ -106,7 +105,7 @@ export circuit redeem(coin: CoinInfo): []{
      assert (stake.status == StakeStatus.open, "Already reemed stake for specified position");
      
      /* Reconfirms staked info in the user's private state incase of fraud */
-     const stakeHash = generatePrivateStateHash(privateState, userPk);
+     const stakeHash = generatePrivateStateHash(privateState, stakerId);
      assert (stakeHash == stake.stake_hash, "Can not add to stake: You are not the owner");
      
      /** Determines redeemable asset balance */
@@ -129,7 +128,7 @@ export circuit redeem(coin: CoinInfo): []{
           status: StakeStatus.closed
      };
 
-     stakings.insert(userPk, updatedStake);
+     stakings.insert(stakerId, updatedStake);
 }
 
 /** DELEGATOR FUNCTIONALITIES */

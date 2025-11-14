@@ -29,7 +29,7 @@ export default function PoolCard({
             {icon}
           </div>
           <p className="text-xs text-muted-foreground">
-            000001001010010010001000100100101010
+            {import.meta.env.VITE_CONTRACT_ADDRESS.substring(0, 10) + "***"}
           </p>
         </div>
       </div>

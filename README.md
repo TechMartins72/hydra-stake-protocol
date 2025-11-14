@@ -8,7 +8,7 @@
 
 # Main Contract Address
 
-0200f316ce75f58726350fb6277306273a6084523a269b0aebb0fd9c71dbb9217a3d
+0200b87185c7a210b1f18c1db8d758ccad329a3360d759f7845940ce4620e9ab8cdf
 
 # dummy contract address
 
@@ -70,3 +70,18 @@ When user clicks on a pool, the contract of the pool is joined and information a
 Information about every contract is stored on ipfs, PINATA.
 
 When a user starts the dapp, they only connect wallet and not join the app yet until they want to display information about a particular pool by clicking on any among in the list or by initiating a transaction
+
+- Render dynamically based on user role: Admin | User | Super Admin
+- Create Admin Dashboard
+- Let admin create new pool by deploying a new contract with parameters
+- Store pool info on pinata - CA, Pool name, token name, stToken color
+- Add admin, remove admin functionality
+
+# problems
+
+- Deployment from UI
+- Users can join, stake assets
+- Conditional rendering of UI based on roles - Admin or User
+- Add and remove admin
+- Create new pools by admin
+- Store pool info on PINATA
