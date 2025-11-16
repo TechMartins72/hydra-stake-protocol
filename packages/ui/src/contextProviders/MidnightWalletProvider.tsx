@@ -410,6 +410,8 @@ const MidnightWalletProvider = ({
         uris: uris,
       };
 
+      console.log("Wallet state", newWalletAPI);
+
       setWalletAPI(newWalletAPI);
       setHasConnected(true);
 

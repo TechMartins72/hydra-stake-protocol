@@ -38,7 +38,12 @@ const HydraStakeContractInstance: HydraStakeContract = new Contract(witnesses);
 export interface DeployedHydraAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state: Observable<DerivedHydraStakeContractState>;
-
+  removeAdmin: (cPk: string) => Promise<FinalizedCallTxData<HydraStakeContract, "removeNewAdmin">>;
+  addNewAdmin: (cPk: string) => Promise<FinalizedCallTxData<HydraStakeContract, "addNewAdmin">>;
+  delegate: () => Promise<FinalizedCallTxData<HydraStakeContract, "delegate">>;
+  redeem: (amount: number) => Promise<FinalizedCallTxData<HydraStakeContract, "redeem">>;
+  setMintTokenColor: () => Promise<FinalizedCallTxData<HydraStakeContract, "setTokenColor">>;
+  stake: (amount: number) => Promise<FinalizedCallTxData<HydraStakeContract, "stake">>;
 }
 
 export class HydraAPI implements DeployedHydraAPI {
