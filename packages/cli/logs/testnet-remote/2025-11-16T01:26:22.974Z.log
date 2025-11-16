@@ -1,0 +1,42 @@
+{"level":30,"time":1763256388704,"pid":112344,"hostname":"codeBigInt","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763256388783,"pid":112344,"hostname":"codeBigInt","msg":"Your wallet seed is: d90d23af2e63f7db5ba10e2bdd11045c866d50ff8f246971c21729d26f142ebc"}
+{"level":30,"time":1763256388784,"pid":112344,"hostname":"codeBigInt","msg":"Your wallet address is: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763256388785,"pid":112344,"hostname":"codeBigInt","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763256388786,"pid":112344,"hostname":"codeBigInt","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763256388791,"pid":112344,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763256398895,"pid":112344,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 11, transactions=114"}
+{"level":30,"time":1763256409205,"pid":112344,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=125"}
+{"level":30,"time":1763256409206,"pid":112344,"hostname":"codeBigInt","msg":"Your wallet balance is: 928199830"}
+{"level":30,"time":1763256420488,"pid":112344,"hostname":"codeBigInt","joinContract":{"contractAddress":"0200f2ba486430ddf3e8a6a29421c01f33c2682bac6866457ab0b74e2cc72aa097c8"}}
+{"level":30,"time":1763256422051,"pid":112344,"hostname":"codeBigInt","msg":"Joined contract at address: 0200f2ba486430ddf3e8a6a29421c01f33c2682bac6866457ab0b74e2cc72aa097c8"}
+{"level":30,"time":1763256428081,"pid":112344,"hostname":"codeBigInt","msg":"Setting mint token color..."}
+{"level":30,"time":1763256471083,"pid":112344,"hostname":"codeBigInt","msg":"Waiting for wallet to sync after setting mint token color..."}
+{"level":30,"time":1763256471110,"pid":112344,"hostname":"codeBigInt","msg":"Syncing after operation. Backend lag: 0, Wallet lag: 0"}
+{"level":30,"time":1763256471111,"pid":112344,"hostname":"codeBigInt","msg":"Wallet sync completed after operation"}
+{"level":30,"time":1763256471138,"pid":112344,"hostname":"codeBigInt","msg":"=== WALLET STATE ==="}
+{"level":30,"time":1763256471138,"pid":112344,"hostname":"codeBigInt","msg":"Address: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763256471139,"pid":112344,"hostname":"codeBigInt","msg":"Sync Status: SYNCED"}
+{"level":30,"time":1763256471139,"pid":112344,"hostname":"codeBigInt","msg":"Apply Gap: 0"}
+{"level":30,"time":1763256471139,"pid":112344,"hostname":"codeBigInt","msg":"Source Gap: 0"}
+{"level":30,"time":1763256471139,"pid":112344,"hostname":"codeBigInt","msg":"=== TOKEN BALANCES ==="}
+{"level":30,"time":1763256471140,"pid":112344,"hostname":"codeBigInt","msg":"Token 0200b8735ff6906ff15205350c26b85fa3098aea65f46835766eb26dc5ce87e8b90e: 5000000"}
+{"level":30,"time":1763256471140,"pid":112344,"hostname":"codeBigInt","msg":"Transaction History Count: 125"}
+{"level":30,"time":1763256471140,"pid":112344,"hostname":"codeBigInt","msg":"==================="}
+{"level":30,"time":1763256479174,"pid":112344,"hostname":"codeBigInt","msg":"Current secrete-key is: 47,161,11,47,223,114,91,171,160,191,199,153,111,40,89,89,142,215,25,235,24,133,64,25,202,133,222,52,73,96,238,163"}
+{"level":30,"time":1763256514602,"pid":112344,"hostname":"codeBigInt","msg":"Redeeming token from pool..."}
+{"level":30,"time":1763256622582,"pid":112344,"hostname":"codeBigInt","msg":"Waiting for wallet to sync after redeeming..."}
+{"level":30,"time":1763256622611,"pid":112344,"hostname":"codeBigInt","msg":"Syncing after operation. Backend lag: 0, Wallet lag: 0"}
+{"level":30,"time":1763256622612,"pid":112344,"hostname":"codeBigInt","msg":"Wallet sync completed after operation"}
+{"level":30,"time":1763256622670,"pid":112344,"hostname":"codeBigInt","msg":"=== WALLET STATE ==="}
+{"level":30,"time":1763256622671,"pid":112344,"hostname":"codeBigInt","msg":"Address: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763256622671,"pid":112344,"hostname":"codeBigInt","msg":"Sync Status: SYNCED"}
+{"level":30,"time":1763256622671,"pid":112344,"hostname":"codeBigInt","msg":"Apply Gap: 0"}
+{"level":30,"time":1763256622672,"pid":112344,"hostname":"codeBigInt","msg":"Source Gap: 0"}
+{"level":30,"time":1763256622672,"pid":112344,"hostname":"codeBigInt","msg":"=== TOKEN BALANCES ==="}
+{"level":30,"time":1763256622672,"pid":112344,"hostname":"codeBigInt","msg":"Native Token (tDUST): 932744140"}
+{"level":30,"time":1763256622672,"pid":112344,"hostname":"codeBigInt","msg":"Transaction History Count: 129"}
+{"level":30,"time":1763256622672,"pid":112344,"hostname":"codeBigInt","msg":"==================="}
+{"level":30,"time":1763256637757,"pid":112344,"hostname":"codeBigInt","msg":"Current secrete-key is: 47,161,11,47,223,114,91,171,160,191,199,153,111,40,89,89,142,215,25,235,24,133,64,25,202,133,222,52,73,96,238,163"}
+{"level":30,"time":1763256643007,"pid":112344,"hostname":"codeBigInt","msg":"Current admins: "}
+{"level":50,"time":1763256919052,"pid":112344,"hostname":"codeBigInt","msg":"Found error 'Aborted with Ctrl+C'"}
+{"level":30,"time":1763256919053,"pid":112344,"hostname":"codeBigInt","msg":"Exiting..."}

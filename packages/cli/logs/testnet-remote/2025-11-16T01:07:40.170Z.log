@@ -1,0 +1,28 @@
+{"level":30,"time":1763255271046,"pid":107214,"hostname":"codeBigInt","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763255271126,"pid":107214,"hostname":"codeBigInt","msg":"Your wallet seed is: d90d23af2e63f7db5ba10e2bdd11045c866d50ff8f246971c21729d26f142ebc"}
+{"level":30,"time":1763255271127,"pid":107214,"hostname":"codeBigInt","msg":"Your wallet address is: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763255271128,"pid":107214,"hostname":"codeBigInt","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763255271128,"pid":107214,"hostname":"codeBigInt","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763255271133,"pid":107214,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763255281276,"pid":107214,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 4, transactions=116"}
+{"level":30,"time":1763255293809,"pid":107214,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=121"}
+{"level":30,"time":1763255293810,"pid":107214,"hostname":"codeBigInt","msg":"Your wallet balance is: 935571736"}
+{"level":30,"time":1763255304025,"pid":107214,"hostname":"codeBigInt","msg":"deploy contract"}
+{"level":30,"time":1763255304049,"pid":107214,"hostname":"codeBigInt","msg":"Random nonce bytes"}
+{"level":30,"time":1763255337207,"pid":107214,"hostname":"codeBigInt","msg":"Deployed contract at address: 0200f2ba486430ddf3e8a6a29421c01f33c2682bac6866457ab0b74e2cc72aa097c8"}
+{"level":30,"time":1763255344075,"pid":107214,"hostname":"codeBigInt","msg":"Staking token to pool..."}
+{"level":30,"time":1763255453043,"pid":107214,"hostname":"codeBigInt","msg":"Waiting for wallet to sync after staking..."}
+{"level":30,"time":1763255453071,"pid":107214,"hostname":"codeBigInt","msg":"Syncing after operation. Backend lag: 0, Wallet lag: 0"}
+{"level":30,"time":1763255453073,"pid":107214,"hostname":"codeBigInt","msg":"Wallet sync completed after operation"}
+{"level":30,"time":1763255453099,"pid":107214,"hostname":"codeBigInt","msg":"=== WALLET STATE ==="}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"Address: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"Sync Status: SYNCED"}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"Apply Gap: 0"}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"Source Gap: 0"}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"=== TOKEN BALANCES ==="}
+{"level":30,"time":1763255453100,"pid":107214,"hostname":"codeBigInt","msg":"Native Token (tDUST): 928199830"}
+{"level":30,"time":1763255453101,"pid":107214,"hostname":"codeBigInt","msg":"Token 0200b8735ff6906ff15205350c26b85fa3098aea65f46835766eb26dc5ce87e8b90e: 5000000"}
+{"level":30,"time":1763255453101,"pid":107214,"hostname":"codeBigInt","msg":"Transaction History Count: 123"}
+{"level":30,"time":1763255453101,"pid":107214,"hostname":"codeBigInt","msg":"==================="}
+{"level":50,"time":1763255516308,"pid":107214,"hostname":"codeBigInt","msg":"Found error 'Aborted with Ctrl+C'"}
+{"level":30,"time":1763255516309,"pid":107214,"hostname":"codeBigInt","msg":"Exiting..."}

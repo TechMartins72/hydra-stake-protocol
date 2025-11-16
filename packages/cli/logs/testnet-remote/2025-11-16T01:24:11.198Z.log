@@ -1,0 +1,16 @@
+{"level":30,"time":1763256262260,"pid":111427,"hostname":"codeBigInt","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763256262353,"pid":111427,"hostname":"codeBigInt","msg":"Your wallet seed is: d90d23af2e63f7db5ba10e2bdd11045c866d50ff8f246971c21729d26f142ebc"}
+{"level":30,"time":1763256262353,"pid":111427,"hostname":"codeBigInt","msg":"Your wallet address is: mn_shield-addr_test1uvmwkqgnh3v7dv92xul2gcrh3uqq84ns23day4za727jzz6wyymsxqzcxa20jn0yux2az6pulym42ych0rdtek530jhf59ds6m4hdcqsyq35lh7v"}
+{"level":30,"time":1763256262354,"pid":111427,"hostname":"codeBigInt","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763256262354,"pid":111427,"hostname":"codeBigInt","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763256262359,"pid":111427,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763256272380,"pid":111427,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763256282499,"pid":111427,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 219, transactions=56"}
+{"level":30,"time":1763256293175,"pid":111427,"hostname":"codeBigInt","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=125"}
+{"level":30,"time":1763256293176,"pid":111427,"hostname":"codeBigInt","msg":"Your wallet balance is: 928199830"}
+{"level":30,"time":1763256321098,"pid":111427,"hostname":"codeBigInt","joinContract":{"contractAddress":"0200f2ba486430ddf3e8a6a29421c01f33c2682bac6866457ab0b74e2cc72aa097c8"}}
+{"level":30,"time":1763256322747,"pid":111427,"hostname":"codeBigInt","msg":"Joined contract at address: 0200f2ba486430ddf3e8a6a29421c01f33c2682bac6866457ab0b74e2cc72aa097c8"}
+{"level":30,"time":1763256350633,"pid":111427,"hostname":"codeBigInt","msg":"Current admins: "}
+{"level":30,"time":1763256363666,"pid":111427,"hostname":"codeBigInt","msg":"Redeeming token from pool..."}
+{"level":50,"time":1763256372632,"pid":111427,"hostname":"codeBigInt","msg":"Found error 'Aborted with Ctrl+C'"}
+{"level":30,"time":1763256372633,"pid":111427,"hostname":"codeBigInt","msg":"Exiting..."}
