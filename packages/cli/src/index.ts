@@ -3,7 +3,7 @@ import { stdin as input, stdout as output } from "node:process";
 import {
   DeployedHydraStakeOnchainContract,
   DerivedHydraStakeContractState,
-  StateraAPI,
+  HydraAPI,
   HydraStakeContractProviders,
   hydraStakePrivateStateId,
   utils,
@@ -83,14 +83,14 @@ const resolve = async (
   providers: HydraStakeContractProviders,
   rli: Interface,
   logger: Logger
-): Promise<StateraAPI | null> => {
-  let api: StateraAPI | null = null;
+): Promise<HydraAPI | null> => {
+  let api: HydraAPI | null = null;
 
   while (true) {
     const choice = await rli.question(DEPLOY_OR_JOIN_QUESTION);
     switch (choice) {
       case "1":
-        api = await StateraAPI.deployHydraStakeContract(providers, {
+        api = await HydraAPI.deployHydraStakeContract(providers, {
           mintDomain: await rli.question("Specify token domain seperator"),
           deleglationContractAddress: await rli.question("Specify delegate contract address"),
           scaleFactor: BigInt(Number(await rli.question("Specify token scale factor")))
@@ -101,7 +101,7 @@ const resolve = async (
         return api;
 
       case "2":
-        api = await StateraAPI.joinHydraStakeContract(
+        api = await HydraAPI.joinHydraStakeContract(
           providers,
           await rli.question("What is the contract address (in hex)?"),
           logger
@@ -203,8 +203,8 @@ const circuit_main_loop = async (
   rli: Interface,
   logger: Logger
 ): Promise<void> => {
-  const stateraApi = await resolve(providers, rli, logger);
-  if (stateraApi === null) return;
+  const hydraDeployedApi = await resolve(providers, rli, logger);
+  if (hydraDeployedApi === null) return;
 
   let currentState: DerivedHydraStakeContractState | undefined;
   const stateObserver = {
@@ -213,7 +213,7 @@ const circuit_main_loop = async (
     },
   };
 
-  const subscription = stateraApi.state.subscribe(stateObserver);
+  const subscription = hydraDeployedApi.state.subscribe(stateObserver);
 
   try {
     while (true) {
@@ -223,7 +223,7 @@ const circuit_main_loop = async (
         case "1": {
           await displayLedgerState(
             providers,
-            stateraApi.allReadyDeployedContract,
+            hydraDeployedApi.allReadyDeployedContract,
             logger
           );
           break;
@@ -247,7 +247,7 @@ const circuit_main_loop = async (
         case "5": {
           // New option to manually check wallet state
           logger.info("Setting mint token color...");
-          await stateraApi.setMintTokenColor();
+          await hydraDeployedApi.setMintTokenColor();
           logger.info(
             "Waiting for wallet to sync after setting mint token color..."
           );
@@ -259,7 +259,7 @@ const circuit_main_loop = async (
         case "6": {
           // New option to manually check wallet state
           logger.info("Staking token to pool...");
-          await stateraApi?.stake(
+          await hydraDeployedApi?.stake(
             Number(await rli.question("Enter stake amount: "))
           );
           logger.info(
@@ -273,7 +273,7 @@ const circuit_main_loop = async (
         case "7": {
           // New option to manually check wallet state
           logger.info("Redeeming token from pool...");
-          await stateraApi?.redeem(
+          await hydraDeployedApi?.redeem(
             Number(await rli.question("Enter stake amount to redeem: "))
           );
           logger.info(

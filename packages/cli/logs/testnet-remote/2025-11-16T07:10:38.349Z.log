@@ -1,0 +1,12 @@
+{"level":30,"time":1763277074082,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763277075131,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Your wallet seed is: 222fd38a35d3c998aaed1fedcc4dd73a9e395451fb1553a42a7e9ccd089ab59e"}
+{"level":30,"time":1763277075134,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Your wallet address is: mn_shield-addr_test1fgkpkaeaw7c0zk32h46kwn4y7r28pmcteyr6vf7h9nr7t3y4y2msxqy6kl9tdl8zsjlq00ekd3sv9gvdrpte2y4v9slt6tn4zhzpxwn3m5p06dlz"}
+{"level":30,"time":1763277075138,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763277075140,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763277075213,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763277087463,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=3"}
+{"level":30,"time":1763277087466,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Your wallet balance is: 996985582"}
+{"level":30,"time":1763277119724,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"deploy contract"}
+{"level":30,"time":1763277119781,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Random nonce bytes"}
+{"level":50,"time":1763277151242,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Found error 'expected instance of Offer'"}
+{"level":30,"time":1763277151245,"pid":40999,"hostname":"martin-Latitude-E7470","msg":"Exiting..."}

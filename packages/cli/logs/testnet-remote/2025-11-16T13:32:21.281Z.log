@@ -1,0 +1,28 @@
+{"level":30,"time":1763299945252,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763299945840,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Your wallet seed is: 222fd38a35d3c998aaed1fedcc4dd73a9e395451fb1553a42a7e9ccd089ab59e"}
+{"level":30,"time":1763299945843,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Your wallet address is: mn_shield-addr_test1fgkpkaeaw7c0zk32h46kwn4y7r28pmcteyr6vf7h9nr7t3y4y2msxqy6kl9tdl8zsjlq00ekd3sv9gvdrpte2y4v9slt6tn4zhzpxwn3m5p06dlz"}
+{"level":30,"time":1763299945847,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763299945849,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763299945885,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763299956378,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=4"}
+{"level":30,"time":1763299956381,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Your wallet balance is: 994850153"}
+{"level":30,"time":1763300020704,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"deploy contract"}
+{"level":30,"time":1763300020754,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Random nonce bytes"}
+{"level":30,"time":1763300062062,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Deployed contract at address: 020078ee52a5c5786480d17f93799cfd3bc59c39cf9833a2ba0e111a877a10ee88d1"}
+{"level":30,"time":1763300075733,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Staking token to pool..."}
+{"level":30,"time":1763300181893,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Waiting for wallet to sync after staking..."}
+{"level":30,"time":1763300181960,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Syncing after operation. Backend lag: 2, Wallet lag: 3"}
+{"level":30,"time":1763300184215,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Syncing after operation. Backend lag: 0, Wallet lag: 0"}
+{"level":30,"time":1763300184219,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Wallet sync completed after operation"}
+{"level":30,"time":1763300184280,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"=== WALLET STATE ==="}
+{"level":30,"time":1763300184281,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Address: mn_shield-addr_test1fgkpkaeaw7c0zk32h46kwn4y7r28pmcteyr6vf7h9nr7t3y4y2msxqy6kl9tdl8zsjlq00ekd3sv9gvdrpte2y4v9slt6tn4zhzpxwn3m5p06dlz"}
+{"level":30,"time":1763300184282,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Sync Status: SYNCED"}
+{"level":30,"time":1763300184282,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Apply Gap: 0"}
+{"level":30,"time":1763300184283,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Source Gap: 0"}
+{"level":30,"time":1763300184283,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"=== TOKEN BALANCES ==="}
+{"level":30,"time":1763300184284,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Native Token (tDUST): 987478355"}
+{"level":30,"time":1763300184285,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Token 02005a70b9db19c10e8d37d5121bba4838901fa9363228c287f768b29813190500c9: 5000000"}
+{"level":30,"time":1763300184286,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Transaction History Count: 6"}
+{"level":30,"time":1763300184286,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"==================="}
+{"level":50,"time":1763302351116,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Found error 'Aborted with Ctrl+C'"}
+{"level":30,"time":1763302351123,"pid":22121,"hostname":"martin-Latitude-E7470","msg":"Exiting..."}

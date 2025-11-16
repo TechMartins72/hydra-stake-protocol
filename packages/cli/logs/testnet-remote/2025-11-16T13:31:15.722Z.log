@@ -1,0 +1,9 @@
+{"level":30,"time":1763299888932,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1763299889470,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Your wallet seed is: 0e44815a770be7f8245670152280c319bdbea3d2828bb5cb365919fd8d2faf0d"}
+{"level":30,"time":1763299889473,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Your wallet address is: mn_shield-addr_test1nsncyjuh0pa2avjlvxs5xjmfq3a2u6ua5fyx7dttp6y54uam0hjqxqrqfq55lqsvkend7cnwz2fs8pj3x36rmws8u8m0d3jjun6jl6egsvfghfed"}
+{"level":30,"time":1763299889476,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1763299889478,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1763299889517,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1763299900251,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 1436, transactions=7"}
+{"level":30,"time":1763299910621,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 1358, transactions=39"}
+{"level":30,"time":1763299921483,"pid":21609,"hostname":"martin-Latitude-E7470","msg":"Waiting for funds. Backend lag: 0, wallet lag: 1304, transactions=80"}
