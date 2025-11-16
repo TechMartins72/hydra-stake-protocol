@@ -1,21 +1,78 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "ui": "tui",
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    ".prettierrc.json"
+  ],
   "tasks": {
-    "build": {
+    "typecheck": {
+      "dependsOn": ["^build", "compact"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.mts", "tsconfig.json"],
+      "outputs": []
+    },
+    "compact": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "env": ["COMPACT_HOME"],
+      "inputs": ["src/**/*.compact"],
+      "outputs": ["src/managed/**", "src/gen/**", "gen/**"]
+    },
+    "compact-dev": {
+      "dependsOn": ["^build"],
+      "env": ["COMPACT_HOME"],
+      "inputs": ["src/**/*.compact"],
+      "outputs": ["src/managed/**", "src/gen/**", "gen/**"]
+    },
+    "build": {
+      "dependsOn": ["^build", "compact", "typecheck"],
+      "inputs": ["src/**/*.ts", "src/**/*.mts", "src/**/*.tsx", "!src/**/*.test.ts", "!tests/**/*.ts", "tsconfig.json", "tsconfig.build.json", ".env"],
+      "outputs": ["dist/**"]
+    },
+    "prebuild": {
+      "dependsOn": ["^prebuild", "compact-dev", "typecheck"],
+      "inputs": ["src/**/*.ts", "src/**/*.mts", "src/**/*.tsx", "!src/**/*.test.ts", "!tests/**/*.ts", "tsconfig.json", "tsconfig.build.json", ".env"],
+      "outputs": ["dist/**"]
+    },
+    "build-storybook": {
+      "dependsOn": ["^build", "typecheck"],
+      "inputs": ["src/**/*.ts", "src/**/*.mts", "src/**/*.tsx", "!src/**/*.test.ts", "!tests/**/*.ts", "tsconfig.json", "tsconfig.build.json", ".env", "vite.config.ts", ".storybook/**"],
+      "outputs": ["storybook-static/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["compact", "^build", "typecheck"],
+      "inputs": ["src/**/*.ts", "src/**/*.mts", "src/**/*.tsx", ".eslintrc.cjs"],
+      "outputs": []
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "test": {
+      "dependsOn": ["^build", "compact", "typecheck"],
+      "inputs": ["src/**/*.ts", "src/**/*.mts", "src/**/*.tsx", "jest.config.ts", "tsconfig.json", "tsconfig.test.json", "test-compose.yml"],
+      "outputs": ["reports/**"]
+    },
+    "check": {
+      "dependsOn": ["build", "lint", "test", "build-storybook"],
+      "outputs": []
+    },
+    "test-e2e": {
+      "dependsOn": ["build", "compact"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "e2e/**/*", "playwright.config.*"],
+      "outputs": ["test-results/**", "playwright-report/**"]
+    },
+    "start": {
+      "cache": false,
+      "persistent": false,
+      "dependsOn": ["build"]
+    },
+    "start-dev": {
+      "cache": false,
+      "persistent": false,
+      "dependsOn": ["prebuild"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "storybook": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["build"]
     }
   }
 }
