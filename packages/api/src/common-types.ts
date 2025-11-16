@@ -26,17 +26,18 @@ export type HydraStakeContractProviders = MidnightProviders<
   HydraStakePrivateStateId,
   HydraStakePrivateState
 >;
-export type DeployedHydraStakeOnchainContract = FoundContract<HydraStakeContract>;
+export type DeployedHydraStakeOnchainContract =
+  FoundContract<HydraStakeContract>;
 export type DerivedHydraStakeContractState = {
-  totalMint: bigint,
-  protocolTVL: QualifiedCoinInfo,
-  mintTokenColor: string,
-  delegationContractAddress: string,
-  admins: Uint8Array[],
-  stakePoolStatus: StakePoolStatus,
-  stakings: DerivedStaker[],
-  validAssetCoinType: string,
-  scaleFactor: bigint
+  totalMint: bigint;
+  protocolTVL: QualifiedCoinInfo;
+  mintTokenColor: string;
+  delegationContractAddress: string;
+  admins: Uint8Array[];
+  stakePoolStatus: StakePoolStatus;
+  stakings: DerivedStaker[];
+  validAssetCoinType: string;
+  scaleFactor: bigint;
 };
 
 export type DerivedStaker = {
@@ -45,13 +46,13 @@ export type DerivedStaker = {
 };
 
 export interface LedgerMapItem<T> {
-  id: Uint8Array,
-  state: T
+  id: Uint8Array;
+  state: T;
 }
 
 export interface DeploymentParams {
-  validAssetContractAddress?: string,
-  mintDomain: string,
-  deleglationContractAddress: string,
-  scaleFactor: bigint
+  validAssetContractAddress?: string;
+  mintDomain: string;
+  deleglationContractAddress: string;
+  scaleFactor: bigint;
 }

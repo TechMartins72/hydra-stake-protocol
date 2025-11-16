@@ -35,18 +35,18 @@ import {
 
 const HydraStakeContractInstance: HydraStakeContract = new Contract(witnesses);
 
-export interface DeployedStateraAPI {
+export interface DeployedHydraAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state: Observable<DerivedHydraStakeContractState>;
 
 }
 
-export class StateraAPI implements DeployedStateraAPI {
+export class HydraAPI implements DeployedHydraAPI {
   deployedContractAddress: string;
   state: Observable<DerivedHydraStakeContractState>;
 
   /**
-   * @param allReadyDeployedContract
+   * @param allReadyDeployedContractState
    * @param logger becomes accessible s if they were decleared as static properties as part of the class
    */
   private constructor(
@@ -98,11 +98,11 @@ export class StateraAPI implements DeployedStateraAPI {
     providers: HydraStakeContractProviders,
     deploymentParams: DeploymentParams,
     logger?: Logger
-  ): Promise<StateraAPI> {
+  ): Promise<HydraAPI> {
     logger?.info("deploy contract");
     const deployedContract = await deployContract<HydraStakeContract>(providers, {
       contract: HydraStakeContractInstance,
-      initialPrivateState: await StateraAPI.getPrivateState(providers),
+      initialPrivateState: await HydraAPI.getPrivateState(providers),
       privateStateId: hydraStakePrivateStateId,
       args: [
         utils.randomNonceBytes(32, logger),
@@ -119,14 +119,14 @@ export class StateraAPI implements DeployedStateraAPI {
       },
     });
 
-    return new StateraAPI(providers, deployedContract, logger);
+    return new HydraAPI(providers, deployedContract, logger);
   }
 
   static async joinHydraStakeContract(
     providers: HydraStakeContractProviders,
     contractAddress: string,
     logger?: Logger
-  ): Promise<StateraAPI> {
+  ): Promise<HydraAPI> {
     logger?.info({
       joinContract: {
         contractAddress,
@@ -138,7 +138,7 @@ export class StateraAPI implements DeployedStateraAPI {
         contract: HydraStakeContractInstance,
         contractAddress: contractAddress,
         privateStateId: hydraStakePrivateStateId,
-        initialPrivateState: await StateraAPI.getPrivateState(providers),
+        initialPrivateState: await HydraAPI.getPrivateState(providers),
       }
     );
 
@@ -147,7 +147,7 @@ export class StateraAPI implements DeployedStateraAPI {
         finalizedDeployTxData: existingContract.deployTxData.public,
       },
     });
-    return new StateraAPI(providers, existingContract, logger);
+    return new HydraAPI(providers, existingContract, logger);
   }
 
   coin(amount: number): CoinInfo {

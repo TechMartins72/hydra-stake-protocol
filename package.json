@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "^0.8.1",
-    "@midnight-ntwrk/dapp-connector-api": "3.0.0",
+    "@midnight-ntwrk/dapp-connector-api": "^3.0.0",
     "@midnight-ntwrk/ledger": "^4.0.0",
     "@midnight-ntwrk/midnight-js-contracts": "2.0.2",
     "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": "2.0.2",
