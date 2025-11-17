@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -9,6 +9,7 @@ import NewPoolModal from "./components/NewPoolModal";
 import AdminDashboard from "./components/Admin";
 import { MidnightWalletContext } from "./contextProviders/MidnightWalletProvider";
 import UnauthenticatedPage from "./components/UnauthenticatedPage";
+import { DeployedContractContext } from "./contextProviders/DeployedContractProvider";
 
 function App() {
   const {
@@ -20,10 +21,12 @@ function App() {
     isOpenCreatePool,
     action,
   } = useContext(DappContext)!;
-  const {
-    state: { hasConnected },
-    hasJoined,
-  } = useContext(MidnightWalletContext)!;
+  const walletContext = useContext(MidnightWalletContext);
+  const deploymentContext = useContext(DeployedContractContext);
+  const notificationContext = useContext(DappContext);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
   const handleActionComplete = (success: boolean, message: string) => {
     setNotification({ type: success ? "success" : "error", message });
@@ -31,7 +34,33 @@ function App() {
     setTimeout(() => setNotification(null), 4000);
   };
 
-  return hasConnected && hasJoined ? (
+  useEffect(() => {
+    (async () => {
+      console.log("Trying to join contract")
+      setIsLoading(true);
+      try {
+        await deploymentContext?.onJoinContract();
+        console.log("Joined contract")
+        setIsLoading(false);
+
+      } catch (error) {
+        setIsLoading(false);
+        const errMsg =
+          error instanceof Error ? error.message : "Failed to join contract";
+        notificationContext?.setNotification({
+          type: "error",
+          message: errMsg
+        });
+      }
+    })();
+  }, [walletContext?.state]);
+
+
+  if (isLoading) {
+    return <div>Loading.....</div>
+  }
+
+  return walletContext?.hasConnected ? (
     <>
       <Header />
       {route === "dashboard" && <Dashboard />}

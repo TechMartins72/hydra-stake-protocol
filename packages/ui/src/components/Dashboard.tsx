@@ -13,7 +13,8 @@ import { Zap, Lock, Wallet, TrendingUp, DollarSign, Award } from "lucide-react";
 import PoolCard from "./PoolCard";
 import { useContext, useState } from "react";
 import { DappContext } from "../contextProviders/DappContextProvider";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import useDeployment from "@/hooks/useDeployment";
+import useNewMidnightWallet from "@/hooks/useMidnightWallet";
 
 const stakingData = [
   { month: "Jan", amount: 4000 },
@@ -35,16 +36,11 @@ const rewardsData = [
 ];
 
 const Dashboard = () => {
-  const {
-    hasConnected,
-    contractState,
-    privateState,
-    isLoadingState,
-    deployedHydraAPI,
-  } = useContext(MidnightWalletContext)!;
+  const deploymentCtx = useDeployment();
+  const walletCtx = useNewMidnightWallet();
   const { setNotification, setIsStakingOpen } = useContext(DappContext)!;
   const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
-  const SCALE_FACTOR = contractState ? contractState.scaleFactor : BigInt(1_000_000);
+  const SCALE_FACTOR = deploymentCtx?.contractState ? deploymentCtx?.contractState.scaleFactor : BigInt(1_000_000);
 
   // Mock user data - replace with actual data from your context/API
   const [userStats] = useState({
@@ -58,12 +54,12 @@ const Dashboard = () => {
   const handleRedeemStake = async () => {
     setIsRedeeming(true);
     try {
-      if (!deployedHydraAPI) {
+      if (!deploymentCtx?.deployedHydraAPI) {
         return;
       }
 
-      await deployedHydraAPI.redeem(
-        Number(privateState?.stakeMetadata.stAssets_minted)
+      await deploymentCtx?.deployedHydraAPI.redeem(
+        Number(deploymentCtx?.privateState?.stakeMetadata.stAssets_minted)
       );
 
       setNotification({
@@ -82,6 +78,8 @@ const Dashboard = () => {
     }
   };
 
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 px-4 py-8 md:px-8">
@@ -99,7 +97,7 @@ const Dashboard = () => {
               </div>
               <button
                 onClick={() => {
-                  hasConnected
+                  walletCtx?.hasConnected
                     ? setIsStakingOpen(true)
                     : setNotification({
                       type: "error",
@@ -115,7 +113,7 @@ const Dashboard = () => {
           </div>
 
           {/* User Personal Stats */}
-          {hasConnected && (
+          {walletCtx?.hasConnected && (
             <div className="glass rounded-3xl p-8 border border-cyan-500/20 bg-linear-to-br from-cyan-950/40 via-blue-950/20 to-transparent">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-cyan-500/20">
@@ -135,11 +133,11 @@ const Dashboard = () => {
                       stAsset Minted
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-purple-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {privateState ? privateState?.stakeMetadata.stAssets_minted / SCALE_FACTOR : 0} sttDUST
+                      {deploymentCtx?.privateState ? deploymentCtx?.privateState?.stakeMetadata.stAssets_minted / SCALE_FACTOR : 0} sttDUST
                     </p>
                   )}
                 </div>
@@ -150,14 +148,14 @@ const Dashboard = () => {
                       <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <h3 className="text-sm font-medium text-gray-300">
-                      {privateState ? privateState?.stakeMetadata.deposit_amount / SCALE_FACTOR : 0}
+                      {deploymentCtx?.privateState ? deploymentCtx?.privateState?.stakeMetadata.deposit_amount / SCALE_FACTOR : 0}
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-emerald-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {privateState ? privateState.stakeMetadata.redeemable / SCALE_FACTOR : 0}
+                      {deploymentCtx?.privateState ? deploymentCtx?.privateState.stakeMetadata.redeemable / SCALE_FACTOR : 0}
                       tDUST
                     </p>
                   )}
@@ -172,7 +170,7 @@ const Dashboard = () => {
                       Total Rewards
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-amber-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
@@ -224,12 +222,12 @@ const Dashboard = () => {
                     Pool Status
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-32 bg-green-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white capitalize mb-1">
-                      {contractState?.stakePoolStatus === 0
+                      {deploymentCtx?.contractState?.stakePoolStatus === 0
                         ? "Available"
                         : "Delegated"}
                     </p>
@@ -250,12 +248,12 @@ const Dashboard = () => {
                     Total stAsset Minted
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-20 bg-blue-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
-                      {String(contractState ? contractState.totalMint / SCALE_FACTOR : 0)}
+                      {String(deploymentCtx?.contractState ? deploymentCtx?.contractState.totalMint / SCALE_FACTOR : 0)}
                     </p>
                     <p className="text-sm text-blue-400">sttDUST</p>
                   </>
@@ -271,12 +269,12 @@ const Dashboard = () => {
                     Protocol TVL
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-24 bg-violet-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
-                      {String(contractState ? contractState.protocolTVL.value / SCALE_FACTOR : 0)}
+                      {String(deploymentCtx?.contractState ? deploymentCtx?.contractState.protocolTVL.value / SCALE_FACTOR : 0)}
                     </p>
                     <p className="text-sm text-violet-400">tDUST</p>
                   </>

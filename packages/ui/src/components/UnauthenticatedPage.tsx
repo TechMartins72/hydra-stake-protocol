@@ -3,11 +3,10 @@ import { Card } from "./ui/card";
 import { Info, Loader2, Wallet, Zap } from "lucide-react";
 import { Badge } from "./ui/badge";
 import useChrome from "../hooks/useChrome";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
-import { useContext } from "react";
+import useNewMidnightWallet from "@/hooks/useMidnightWallet";
 
 const UnauthenticatedPage = () => {
-  const { connectFn, isConnecting } = useContext(MidnightWalletContext)!;
+  const walletCtx = useNewMidnightWallet();
   const isChromeBrowser = useChrome();
 
   if (!isChromeBrowser) {
@@ -59,11 +58,11 @@ const UnauthenticatedPage = () => {
         </p>
         <Button
           onClick={async () => {
-            await connectFn();
+            await walletCtx?.connectFn();
           }}
           className="gap-2 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/25"
         >
-          {isConnecting ? (
+          {walletCtx?.isConnecting ? (
             <>
               <Loader2 className="animate-spin h-5 w-5" />
               <span>Connecting...</span>

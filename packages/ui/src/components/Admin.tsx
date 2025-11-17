@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Wallet,
   Users,
@@ -10,10 +10,10 @@ import {
   ExternalLink,
   AlertCircle,
 } from "lucide-react";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import useDeployment from "@/hooks/useDeployment";
 
 const AdminDashboard = () => {
-  const { contractState } = useContext(MidnightWalletContext)!;
+  const deploymentCtx = useDeployment();
 
   const [activeTab, setActiveTab] = useState("pools");
   const [newAdminAddress, setNewAdminAddress] = useState("");
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {String(contractState?.protocolTVL.value) ?? 0}{" "}
+              {String(deploymentCtx?.contractState?.protocolTVL.value) ?? 0}{" "}
               <small>tDUST</small>
             </p>
           </div>
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
               <Wallet className="w-5 h-5 text-accent" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {contractState?.totalMint} <small>sttDUST</small>
+              {deploymentCtx?.contractState?.totalMint} <small>sttDUST</small>
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Across all pools
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
               <Users className="w-5 h-5 text-purple-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {contractState?.admins.length}
+              {deploymentCtx?.contractState?.admins.length}
             </p>
             <p className="text-xs text-muted-foreground mt-1">1 super admin</p>
           </div>
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
                     Total Value Locked
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    tDUST {String(contractState?.protocolTVL.value) ?? 0}
+                    tDUST {String(deploymentCtx?.contractState?.protocolTVL.value) ?? 0}
                   </p>
                 </div>
                 <div>
@@ -188,7 +188,7 @@ const AdminDashboard = () => {
                     stAssets Minted
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    sttDUST {contractState?.totalMint}
+                    sttDUST {deploymentCtx?.contractState?.totalMint}
                   </p>
                 </div>
               </div>
@@ -284,7 +284,7 @@ const AdminDashboard = () => {
                   <Trash2 className="w-5 h-5 text-muted-foreground group-hover:text-red-500 transition-all" />
                 </button>
               </div>
-              {contractState?.admins.map((admin, idx) => (
+              {deploymentCtx?.contractState?.admins.map((admin, idx) => (
                 <div
                   key={idx}
                   className="bg-card border border-border rounded-lg p-6 flex items-center justify-between hover:border-accent/50 transition-all"

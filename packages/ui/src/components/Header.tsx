@@ -1,17 +1,13 @@
 import { Wallet, History, LogOut } from "lucide-react";
 import { DappContext } from "../contextProviders/DappContextProvider";
-import { useContext, useState } from "react";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import { useContext } from "react";
+import useNewMidnightWallet from "@/hooks/useMidnightWallet";
 
 const Header = () => {
   const { setRoute, route } = useContext(DappContext)!;
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const {
-    state: { hasConnected, isConnecting, address },
-    connectFn,
-    disconnect,
-  } = useContext(MidnightWalletContext)!;
+  // const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const walletCtx = useNewMidnightWallet();
 
   return (
     <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
@@ -62,18 +58,18 @@ const Header = () => {
                 </button> */}
           </div>
           <button
-            onClick={connectFn}
+            onClick={walletCtx?.connectFn}
             className="px-4 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all font-semibold text-sm cursor-pointer"
           >
-            {!isConnecting
-              ? hasConnected
-                ? address?.substring(0, 21)
+            {!walletCtx?.isConnecting
+              ? walletCtx?.hasConnected
+                ? walletCtx?.state?.address?.substring(0, 21)
                 : "Connect Wallet"
               : "connecting..."}
           </button>
-          {hasConnected && (
+          {walletCtx?.hasConnected && (
             <button
-              onClick={disconnect}
+              onClick={walletCtx?.disconnect}
               className="p-2 rounded-lg hover:bg-card transition-all cursor-pointer"
             >
               <LogOut className="w-5 h-5 text-muted-foreground hover:text-accent transition-all" />
