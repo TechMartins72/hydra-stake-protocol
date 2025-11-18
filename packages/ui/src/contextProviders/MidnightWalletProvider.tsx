@@ -76,6 +76,7 @@ export type MidnightWalletContextType = {
   checkProofServerStatus: (uri: string) => Promise<void>;
   proofProvider: ProofProvider<string>;
   disconnect: () => Promise<void>;
+  privateState: HydraStakePrivateState
 };
 
 export const MidnightWalletContext =
@@ -92,6 +93,8 @@ const MidnightWalletProvider = ({
   const [providers, setProviders] = useState<
     HydraStakeContractProviders | undefined
   >(undefined);
+  const [privateState, setPrivateState] =
+    useState<HydraStakePrivateState | null>(null);
   const [walletState, setWalletState] = useState<MidnightWalletState>({
     address: undefined,
     isConnecting: false,
@@ -242,7 +245,8 @@ const MidnightWalletProvider = ({
       }
 
       console.info({
-        message: "Wallet state retrieved", connectedWalletState
+        message: "Wallet state retrieved",
+        connectedWalletState,
       });
 
       const newWalletAPI = {
@@ -335,7 +339,7 @@ const MidnightWalletProvider = ({
       setHasConnected(false);
       console.log(errorMessage);
 
-     console.error("Wallet connection failed", { error: errorMessage });
+      console.error("Wallet connection failed", { error: errorMessage });
     } finally {
       setIsConnecting(false);
     }
@@ -394,6 +398,18 @@ const MidnightWalletProvider = ({
     proofProvider,
   ]);
 
+  useEffect(() => {
+    const getPrivateState = async () => {
+      if (!providers) return;
+      const privState = await providers.privateStateProvider.get(
+        hydraStakePrivateStateId
+      );
+      setPrivateState(privState);
+    };
+
+    getPrivateState;
+  }, [providers]);
+
   const disconnect = async () => {
     sessionStorage.removeItem("WALLET_STATE");
     sessionStorage.removeItem("WALLET_CONNECTED");
@@ -431,6 +447,7 @@ const MidnightWalletProvider = ({
       providers,
       disconnect,
       checkProofServerStatus: checkProofServerStatus,
+      privateState,
     }),
     [
       walletState,
@@ -443,6 +460,7 @@ const MidnightWalletProvider = ({
       isConnecting,
       hasConnected,
       providers,
+      privateState,
     ]
   );
 

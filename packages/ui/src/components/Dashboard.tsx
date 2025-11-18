@@ -10,7 +10,9 @@ const Dashboard = () => {
   const walletCtx = useNewMidnightWallet();
   const { setNotification, setIsStakingOpen } = useContext(DappContext)!;
   // const [_, setIsRedeeming] = useState<boolean>(false);
-  const SCALE_FACTOR = deploymentCtx?.contractState ? deploymentCtx?.contractState.scaleFactor : BigInt(1_000_000);
+  const SCALE_FACTOR = deploymentCtx?.contractState
+    ? deploymentCtx?.contractState.scaleFactor
+    : BigInt(1_000_000);
 
   // Mock user data - replace with actual data from your context/API
   const [userStats] = useState({
@@ -48,8 +50,6 @@ const Dashboard = () => {
   //   }
   // };
 
-
-
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 px-4 py-8 md:px-8">
@@ -70,9 +70,9 @@ const Dashboard = () => {
                   walletCtx?.hasConnected
                     ? setIsStakingOpen(true)
                     : setNotification({
-                      type: "error",
-                      message: "Connect wallet to stake",
-                    });
+                        type: "error",
+                        message: "Connect wallet to stake",
+                      });
                 }}
                 className="px-8 py-3 bg-accent text-accent-foreground rounded-xl font-semibold hover:shadow-lg hover:glow-accent-hover transition-all duration-300 flex items-center gap-2 whitespace-nowrap cursor-pointer"
               >
@@ -107,7 +107,9 @@ const Dashboard = () => {
                     <div className="h-9 w-32 bg-purple-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.stAssetMinted / SCALE_FACTOR : 0} sttDUST
+                      {walletCtx.privateState?.stakeMetadata.stAssets_minted ??
+                        0}
+                      sttDUST
                     </p>
                   )}
                 </div>
@@ -118,14 +120,15 @@ const Dashboard = () => {
                       <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <h3 className="text-sm font-medium text-gray-300">
-                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.depositAmount / SCALE_FACTOR : 0}
+                      {walletCtx.privateState?.stakeMetadata.deposit_amount ??
+                        0}
                     </h3>
                   </div>
                   {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-emerald-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.redeemable / SCALE_FACTOR : 0}
+                      {walletCtx.privateState?.stakeMetadata.redeemable ?? 0}
                       tDUST
                     </p>
                   )}
@@ -144,7 +147,8 @@ const Dashboard = () => {
                     <div className="h-9 w-32 bg-amber-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {userStats.totalRewards.toLocaleString()} tDUST
+                      {walletCtx.privateState?.stakeMetadata.redeemable ?? 0} {" "}
+                      tDUST
                     </p>
                   )}
                 </div>
@@ -161,7 +165,6 @@ const Dashboard = () => {
               <h2 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Pools
               </h2>
-              
             </div>
             <div className="flex flex-col justify-center items-center w-full gap-4">
               <PoolCard
@@ -223,7 +226,12 @@ const Dashboard = () => {
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
-                      {String(deploymentCtx?.contractState ? deploymentCtx?.contractState.totalMint / SCALE_FACTOR : 0)}
+                      {String(
+                        deploymentCtx?.contractState
+                          ? deploymentCtx?.contractState.totalMint /
+                              SCALE_FACTOR
+                          : 0
+                      )}
                     </p>
                     <p className="text-sm text-blue-400">sttDUST</p>
                   </>
@@ -244,7 +252,12 @@ const Dashboard = () => {
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
-                      {String(deploymentCtx?.contractState ? deploymentCtx?.contractState.protocolTVL.value / SCALE_FACTOR : 0)}
+                      {String(
+                        deploymentCtx?.contractState
+                          ? deploymentCtx?.contractState.protocolTVL.value /
+                              SCALE_FACTOR
+                          : 0
+                      )}
                     </p>
                     <p className="text-sm text-violet-400">tDUST</p>
                   </>

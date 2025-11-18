@@ -1,7 +1,5 @@
 import useMidnightWallet from "@/hooks/useMidnightWallet";
-import type {
-  HydraStakePrivateState,
-} from "@hydra/hydra-stake-protocol";
+import type { HydraStakePrivateState } from "@hydra/hydra-stake-protocol";
 
 import type { Logger } from "pino";
 import {
@@ -12,8 +10,11 @@ import {
   type PropsWithChildren,
 } from "react";
 import useDappContext from "@/hooks/useDappContext";
-import { HydraAPI, type DeployedHydraAPI, type DerivedHydraStakeContractState } from "@hydra/hydra-stake-api";
-
+import {
+  HydraAPI,
+  type DeployedHydraAPI,
+  type DerivedHydraStakeContractState,
+} from "@hydra/hydra-stake-api";
 
 export interface DeploymentProvider {
   // readonly userRole: "admin" | "user";
@@ -40,9 +41,9 @@ export const DeployedContractProvider = ({
   children,
   contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS,
 }: DeployedContractProviderProps) => {
-  const [deployedHydraAPI, setHydraAPI] = useState<DeployedHydraAPI | undefined>(
-    undefined
-  );
+  const [deployedHydraAPI, setHydraAPI] = useState<
+    DeployedHydraAPI | undefined
+  >(undefined);
   const notification = useDappContext();
   const [isJoining, setIsJoining] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,21 +51,24 @@ export const DeployedContractProvider = ({
     DerivedHydraStakeContractState | undefined
   >(undefined);
   const [hasJoined, setHasJoined] = useState<boolean>(false);
-  const [privateState, setPrivateState] = useState<HydraStakePrivateState | null>(
-    null
-  );
+  const [privateState, setPrivateState] =
+    useState<HydraStakePrivateState | null>(null);
   // const [userRole, setUserRole] = useState<"admin" | "user">("user");
 
   // Use the custom hook instead of useContext directly
   const walletContext = useMidnightWallet();
 
-  const sendNotification = (message: string, type: "error" | "success" = "success") => {
-    !notification ? console.log(message) :
-      notification.setNotification({
-        type,
-        message
-      });
-  }
+  const sendNotification = (
+    message: string,
+    type: "error" | "success" = "success"
+  ) => {
+    !notification
+      ? console.log(message)
+      : notification.setNotification({
+          type,
+          message,
+        });
+  };
 
   const onJoinContract = async () => {
     console.log("Starting to join contract");
@@ -89,12 +93,12 @@ export const DeployedContractProvider = ({
 
     try {
       const deployedAPI = await HydraAPI.joinHydraStakeContract(
-       walletContext,
+        walletContext,
         contractAddress
-      )
+      );
       console.log("Deployed contract", deployedAPI);
       setHydraAPI(deployedAPI);
-      sendNotification("Onboarded successfully", "success")
+      sendNotification("Onboarded successfully", "success");
       setHasJoined(true);
       console.info("Successfully joined contract", { contractAddress });
     } catch (error) {
@@ -122,12 +126,11 @@ export const DeployedContractProvider = ({
 
     const stateSubscription = deployedHydraAPI.state.subscribe((state) => {
       console.log("Current state", state);
-      setContractState(state)
+      setContractState(state);
     });
 
     return () => stateSubscription.unsubscribe();
   }, [deployedHydraAPI]);
-
 
   const contextValue: DeploymentProvider = {
     isJoining,
