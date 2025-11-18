@@ -193,7 +193,8 @@ You can do one of the following:
   5. Set coin color
   6. Stake Asset
   7. Redeem
-  8. Exit
+  8. Delegating token to third party
+  9. Exit
 
 Which would you like to do? `;
 
@@ -285,6 +286,18 @@ const circuit_main_loop = async (
         }
 
         case "8": {
+          // New option to manually check wallet state
+          logger.info("Delegating token to third party...");
+          await hydraDeployedApi?.delegate();
+          logger.info(
+            "Waiting for wallet to sync after redeeming..."
+          );
+          await waitForWalletSyncAfterOperation(wallet, logger);
+          await displayComprehensiveWalletState(wallet, currentState, logger);
+          break;
+        }
+
+        case "9": {
           logger.info("Exiting.......");
           return;
         }

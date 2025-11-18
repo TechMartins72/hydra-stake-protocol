@@ -3,11 +3,12 @@ import { Card } from "./ui/card";
 import { Info, Loader2, Wallet, Zap } from "lucide-react";
 import { Badge } from "./ui/badge";
 import useChrome from "../hooks/useChrome";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
-import { useContext } from "react";
+import useNewMidnightWallet from "@/hooks/useMidnightWallet";
+import useDeployment from "@/hooks/useDeployment";
 
 const UnauthenticatedPage = () => {
-  const { connectFn, isConnecting } = useContext(MidnightWalletContext)!;
+  const walletCtx = useNewMidnightWallet();
+  const deploymentCtx = useDeployment();
   const isChromeBrowser = useChrome();
 
   if (!isChromeBrowser) {
@@ -48,7 +49,7 @@ const UnauthenticatedPage = () => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in flex justify-center items-center p-4">
       <Card className="relative w-full max-w-md px-8 py-14 text-center flex flex-col justify-center items-center gap-6 overflow-hidden backdrop-blur-xl border bg-linear-to-br from-cyan-900/20 to-blue-900/20 border-cyan-500/30 shadow-lg shadow-cyan-500/10 animate-slide-in">
         <div className="p-6 bg-linear-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
-          <Zap className="w-16 h-16 text-white" />
+          <Wallet className="w-16 h-16 text-white" />
         </div>
         <h3 className="text-3xl font-bold">
           Welcome to Hydra Staking Platform
@@ -59,11 +60,12 @@ const UnauthenticatedPage = () => {
         </p>
         <Button
           onClick={async () => {
-            await connectFn();
+            await walletCtx?.connectFn();
+            await deploymentCtx?.onJoinContract();
           }}
           className="gap-2 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/25"
         >
-          {isConnecting ? (
+          {walletCtx?.isConnecting ? (
             <>
               <Loader2 className="animate-spin h-5 w-5" />
               <span>Connecting...</span>

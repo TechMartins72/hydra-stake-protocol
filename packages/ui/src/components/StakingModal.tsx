@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { X, Check, ChevronRight } from "lucide-react";
 import ModalStep from "./ModalSteps";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import useDeployment from "@/hooks/useDeployment";
 
 export interface StakingModalProps {
   onClose: () => void;
@@ -12,9 +12,7 @@ export interface StakingModalProps {
 export type StepType = "amount" | "confirm" | "processing" | "complete";
 
 const StakingModal = ({ onClose, onComplete }: StakingModalProps) => {
-  const { deployedHydraAPI, contractState } = useContext(
-    MidnightWalletContext
-  )!;
+  const deploymentCtx = useDeployment();
   const [currentStep, setCurrentStep] = useState<StepType>("amount");
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,13 +27,15 @@ const StakingModal = ({ onClose, onComplete }: StakingModalProps) => {
 
       setCurrentStep("confirm");
     } else if (currentStep === "confirm") {
-      if (!contractState || !deployedHydraAPI) {
+      if (!deploymentCtx?.contractState || !deploymentCtx.deployedHydraAPI) {
         return;
       }
 
       setCurrentStep("processing");
       setIsProcessing(true);
-      await deployedHydraAPI.stake(Number(amount));
+      await deploymentCtx?.deployedHydraAPI.stake(
+        Number(amount)
+      );
       setCurrentStep("complete");
     } else if (currentStep === "complete") {
       onComplete(true, `Successfully staked ${amount} tDUST!`);

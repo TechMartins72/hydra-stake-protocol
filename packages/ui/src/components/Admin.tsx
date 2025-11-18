@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import { useState } from "react";
 import {
   AlertCircle,
   ExternalLink,
@@ -11,11 +10,12 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
+import useDeployment from "@/hooks/useDeployment";
 
 const AdminDashboard = () => {
-  const { contractState, deployedHydraAPI } = useContext(
-    MidnightWalletContext
-  )!;
+  const deploymentCtx = useDeployment();
+  const SCALE_FACTOR = deploymentCtx?.contractState ? deploymentCtx?.contractState.scaleFactor : BigInt(1_000_000);
+
   const [activeTab, setActiveTab] = useState("pools");
   const [newAdminAddress, setNewAdminAddress] = useState("");
   const [showAddAdmin, setShowAddAdmin] = useState(false);
@@ -29,6 +29,8 @@ const AdminDashboard = () => {
   const SCALE_FACTOR = contractState
     ? contractState.scaleFactor
     : BigInt(1_000_000);
+
+  // if(!deploymentCtx?.contractState) return;
 
   // Mock data - replace with actual data from your context
   const delegateTokens = () => {};
@@ -102,9 +104,7 @@ const AdminDashboard = () => {
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {contractState
-                ? contractState.protocolTVL.value / SCALE_FACTOR
-                : 0}
+              {deploymentCtx?.contractState ? (deploymentCtx?.contractState?.protocolTVL.value) / SCALE_FACTOR : 0}{" "}
               <small>tDUST</small>
             </p>
           </div>
@@ -115,8 +115,7 @@ const AdminDashboard = () => {
               <Wallet className="w-5 h-5 text-accent" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {contractState ? contractState.totalMint / SCALE_FACTOR : 0}{" "}
-              <small>sttDUST</small>
+              {deploymentCtx?.contractState ? (deploymentCtx?.contractState?.totalMint) / SCALE_FACTOR : 0}{" "}<small>sttDUST</small>
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Across all pools
@@ -140,7 +139,7 @@ const AdminDashboard = () => {
               <Users className="w-5 h-5 text-purple-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {contractState ? contractState.admins.length + 1 : 1}
+              {deploymentCtx?.contractState ? deploymentCtx?.contractState?.admins.length + 1 : 1}
             </p>
             <p className="text-xs text-muted-foreground mt-1">1 super admin</p>
           </div>
@@ -211,10 +210,7 @@ const AdminDashboard = () => {
                     Total Value Locked
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    tDUST{" "}
-                    {contractState
-                      ? contractState?.protocolTVL.value / SCALE_FACTOR
-                      : 0}
+                    tDUST {deploymentCtx?.contractState ? deploymentCtx?.contractState?.protocolTVL.value / SCALE_FACTOR : 0}
                   </p>
                 </div>
                 <div>
@@ -222,8 +218,7 @@ const AdminDashboard = () => {
                     stAssets Minted
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    sttDUST{" "}
-                    {contractState ? contractState.totalMint / SCALE_FACTOR : 0}
+                    sttDUST {deploymentCtx?.contractState ? deploymentCtx?.contractState?.totalMint / SCALE_FACTOR : 0}
                   </p>
                 </div>
               </div>
@@ -276,7 +271,7 @@ const AdminDashboard = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      Coin Public Key
+                      User coin public key
                     </label>
                     <input
                       type="text"
@@ -322,9 +317,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="flex flex-col">
                     <p className="font-mono text-foreground font-medium">
-                      {(
-                        import.meta.env.VITE_SUPER_ADMIN_COIN_PUBKEY as string
-                      ).substring(0, 20) + "***"}
+                      {import.meta.env.VITE_CONTRACT_ADDRESS.substring(0, 10) + "***"}
                     </p>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mediumbg-purple-500/10 text-purple-500">
                       Super Admin
@@ -332,7 +325,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              {contractState?.admins.map((admin, idx) => (
+              {deploymentCtx?.contractState?.admins.map((admin, idx) => (
                 <div
                   key={idx}
                   className="bg-card border border-border rounded-lg p-6 flex items-center justify-between hover:border-accent/50 transition-all"

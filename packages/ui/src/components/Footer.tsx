@@ -41,20 +41,6 @@ const Footer = () => {
             ))}
           </div>
         </div>
-
-        <div className="flex gap-2 border-t border-border/50 pt-8">
-          <div>
-            <img
-              src="/hydra-stake-logo.png"
-              alt="Hydra Stake Logo"
-              width={24}
-              height={24}
-            />
-          </div>
-          <p className="text-center text-muted-foreground text-sm">
-            © 2025 HydraStake. All rights reserved.
-          </p>{" "}
-        </div>
       </div>
     </footer>
   );

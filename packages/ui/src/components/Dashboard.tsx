@@ -1,66 +1,46 @@
-import {
-  Zap,
-  Lock,
-  Wallet,
-  TrendingUp,
-  DollarSign,
-  Award,
-  BanknoteArrowDown,
-} from "lucide-react";
+import { Zap, Lock, Wallet, TrendingUp, DollarSign, Award } from "lucide-react";
 import PoolCard from "./PoolCard";
 import { useContext, useState } from "react";
 import { DappContext } from "../contextProviders/DappContextProvider";
-import { MidnightWalletContext } from "@/contextProviders/MidnightWalletProvider";
+import useDeployment from "@/hooks/useDeployment";
+import useNewMidnightWallet from "@/hooks/useMidnightWallet";
 
 const Dashboard = () => {
-  const {
-    hasConnected,
-    contractState,
-    privateState,
-    isLoadingState,
-    deployedHydraAPI,
-  } = useContext(MidnightWalletContext)!;
+  const deploymentCtx = useDeployment();
+  const walletCtx = useNewMidnightWallet();
   const { setNotification, setIsStakingOpen } = useContext(DappContext)!;
-  const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
-  const SCALE_FACTOR = contractState
-    ? contractState.scaleFactor
+  // const [_, setIsRedeeming] = useState<boolean>(false);
+  const SCALE_FACTOR = deploymentCtx?.contractState
+    ? deploymentCtx?.contractState.scaleFactor
     : BigInt(1_000_000);
 
-  // Mock user data - replace with actual data from your context/API
-  const [userStats] = useState({
-    assetBalance: 0, // User's tDUST balance
-    stAssetBalance: 0, // User's sttDUST balance
-    totalStaked: 0, // Total amount user has staked
-    totalRewards: 0, // Total rewards earned
-  });
-
   // Redeem handler
-  const handleRedeemStake = async () => {
-    setIsRedeeming(true);
-    try {
-      if (!deployedHydraAPI) {
-        return;
-      }
+  // const handleRedeemStake = async () => {
+  //   setIsRedeeming(true);
+  //   try {
+  //     if (!deploymentCtx?.deployedHydraAPI) {
+  //       return;
+  //     }
 
-      await deployedHydraAPI.redeem(
-        Number(privateState?.stakeMetadata.stAssets_minted)
-      );
+  //     await deploymentCtx?.deployedHydraAPI.redeem(
+  //       Number(deploymentCtx?.privateState?.stakeMetadata.stAssets_minted)
+  //     );
 
-      setNotification({
-        type: "success",
-        message: "Redeemed successfully",
-      });
+  //     setNotification({
+  //       type: "success",
+  //       message: "Redeemed successfully"
+  //     })
 
-      setIsRedeeming(false);
-    } catch (error) {
-      console.log({ error });
-      setNotification({
-        type: "error",
-        message: "Failed to redeemed",
-      });
-      setIsRedeeming(false);
-    }
-  };
+  //     setIsRedeeming(false);
+  //   } catch (error) {
+  //     console.log({ error });
+  //     setNotification({
+  //       type: "error",
+  //       message: "Failed to redeemed"
+  //     })
+  //     setIsRedeeming(false);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -79,7 +59,7 @@ const Dashboard = () => {
               </div>
               <button
                 onClick={() => {
-                  hasConnected
+                  walletCtx?.hasConnected
                     ? setIsStakingOpen(true)
                     : setNotification({
                         type: "error",
@@ -95,7 +75,7 @@ const Dashboard = () => {
           </div>
 
           {/* User Personal Stats */}
-          {hasConnected && (
+          {walletCtx?.hasConnected && (
             <div className="glass rounded-3xl p-8 border border-cyan-500/20 bg-linear-to-br from-cyan-950/40 via-blue-950/20 to-transparent">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-cyan-500/20">
@@ -115,14 +95,12 @@ const Dashboard = () => {
                       stAsset Minted
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-purple-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {privateState
-                        ? privateState?.stakeMetadata.stAssets_minted /
-                          SCALE_FACTOR
-                        : 0}{" "}
+                      {deploymentCtx?.contractState?.stAssetMinted ??
+                        0}
                       sttDUST
                     </p>
                   )}
@@ -134,19 +112,15 @@ const Dashboard = () => {
                       <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <h3 className="text-sm font-medium text-gray-300">
-                      {privateState
-                        ? privateState?.stakeMetadata.deposit_amount /
-                          SCALE_FACTOR
-                        : 0}
+                      {deploymentCtx?.contractState?.depositAmount ??
+                        0}
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-emerald-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {privateState
-                        ? privateState.stakeMetadata.redeemable / SCALE_FACTOR
-                        : 0}
+                      {deploymentCtx?.contractState?.redeemable ?? 0}
                       tDUST
                     </p>
                   )}
@@ -161,11 +135,12 @@ const Dashboard = () => {
                       Total Rewards
                     </h3>
                   </div>
-                  {isLoadingState ? (
+                  {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-amber-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {userStats.totalRewards.toLocaleString()} tDUST
+                      {deploymentCtx?.contractState?.redeemable ?? 0} {" "}
+                      tDUST
                     </p>
                   )}
                 </div>
@@ -184,19 +159,9 @@ const Dashboard = () => {
                   Pools
                 </h2>
               </div>
-              <button
-                onClick={handleRedeemStake}
-                disabled={
-                  isRedeeming ||
-                  (privateState
-                    ? privateState?.stakeMetadata.deposit_amount > 0n
-                    : false)
-                }
-                className="px-8 py-3 bg-accent text-accent-foreground rounded-xl font-semibold hover:shadow-lg hover:glow-accent-hover transition-all duration-300 flex items-center gap-2 whitespace-nowrap cursor-pointer"
-              >
-                <BanknoteArrowDown />
-                Redeem
-              </button>
+              <h2 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Pools
+              </h2>
             </div>
             <div className="flex flex-col justify-center items-center w-full gap-4">
               <PoolCard
@@ -227,12 +192,12 @@ const Dashboard = () => {
                     Pool Status
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-32 bg-green-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white capitalize mb-1">
-                      {contractState?.stakePoolStatus === 0
+                      {deploymentCtx?.contractState?.stakePoolStatus === 0
                         ? "Available"
                         : "Delegated"}
                     </p>
@@ -253,14 +218,15 @@ const Dashboard = () => {
                     Total stAsset Minted
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-20 bg-blue-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
                       {String(
-                        contractState
-                          ? contractState.totalMint / SCALE_FACTOR
+                        deploymentCtx?.contractState
+                          ? deploymentCtx?.contractState.totalMint /
+                              SCALE_FACTOR
                           : 0
                       )}
                     </p>
@@ -278,14 +244,15 @@ const Dashboard = () => {
                     Protocol TVL
                   </h3>
                 </div>
-                {isLoadingState ? (
+                {deploymentCtx?.isJoining ? (
                   <div className="h-9 w-24 bg-violet-500/10 animate-pulse rounded" />
                 ) : (
                   <>
                     <p className="text-3xl font-bold text-white mb-1">
                       {String(
-                        contractState
-                          ? contractState.protocolTVL.value / SCALE_FACTOR
+                        deploymentCtx?.contractState
+                          ? deploymentCtx?.contractState.protocolTVL.value /
+                              SCALE_FACTOR
                           : 0
                       )}
                     </p>
@@ -293,6 +260,23 @@ const Dashboard = () => {
                   </>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="glass glass-hover rounded-2xl p-6 border border-border/50">
+              <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-accent glow-accent" />
+                Staking Growth
+              </h3>
+            </div>
+
+            <div className="glass glass-hover rounded-2xl p-6 border border-border/50">
+              <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-accent glow-accent" />
+                Weekly Rewards
+              </h3>
             </div>
           </div>
         </div>

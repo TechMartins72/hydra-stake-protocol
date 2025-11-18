@@ -14,7 +14,7 @@ export const DappContext = createContext<DappConfigType | null>(null);
 
 type routes = "dashboard" | "admin";
 
-interface DappConfigType {
+export interface DappConfigType {
   notification: {
     type: NotificationType;
     message: string;

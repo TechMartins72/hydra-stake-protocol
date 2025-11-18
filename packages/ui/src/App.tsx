@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -9,6 +9,8 @@ import NewPoolModal from "./components/NewPoolModal";
 import AdminDashboard from "./components/Admin";
 import { MidnightWalletContext } from "./contextProviders/MidnightWalletProvider";
 import UnauthenticatedPage from "./components/UnauthenticatedPage";
+import { DeployedContractContext } from "./contextProviders/DeployedContractProvider";
+import { Loader2 } from "lucide-react";
 
 function App() {
   const {
@@ -20,10 +22,11 @@ function App() {
     isOpenCreatePool,
     action,
   } = useContext(DappContext)!;
-  const {
-    state: { hasConnected },
-    hasJoined,
-  } = useContext(MidnightWalletContext)!;
+  const walletContext = useContext(MidnightWalletContext);
+  const deploymentContext = useContext(DeployedContractContext);
+  // const notificationContext = useContext(DappContext);
+
+
 
   const handleActionComplete = (success: boolean, message: string) => {
     setNotification({ type: success ? "success" : "error", message });
@@ -31,7 +34,15 @@ function App() {
     setTimeout(() => setNotification(null), 4000);
   };
 
-  return (
+
+
+  if (deploymentContext?.isJoining) {
+    return <div className="w-full h-screen flex justify-center items-center">
+      <Loader2 className="fill-[#00d9ff] h-24 w-24 animate-spin delay-1000" />
+    </div>
+  }
+
+  return walletContext?.hasConnected ? (
     <>
       <Header />
       {route === "dashboard" && <Dashboard />}

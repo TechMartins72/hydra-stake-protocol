@@ -1,30 +1,21 @@
-import { connectWallet } from "../lib/walletConnection";
+import { connectWallet } from "@/lib/actions";
+import type { WalletAPI } from "@/lib/common-types";
 import {
-  type TokenCircuitKeys,
   hydraStakePrivateStateId,
   type HydraStakeContractProviders,
-  HydraAPI,
-  type DerivedHydraStakeContractState,
-  type DeploymentParams,
+  type HydraStakePrivateStateId,
+  type TokenCircuitKeys,
 } from "@hydra/hydra-stake-api";
-import type {
-  ServiceUriConfig,
-  DAppConnectorWalletAPI,
-} from "@midnight-ntwrk/dapp-connector-api";
 import type { Logger } from "pino";
 import {
   createContext,
-  useContext,
   useEffect,
   useMemo,
   useState,
-  type Dispatch,
   type PropsWithChildren,
-  type SetStateAction,
 } from "react";
 import {
   Transaction as ZswapTransaction,
-  type ContractAddress,
   type TransactionId,
 } from "@midnight-ntwrk/zswap";
 import { PrivateStateProviderWrapper } from "./providers/privateStateProvider";
@@ -50,15 +41,8 @@ import {
 import { Transaction } from "@midnight-ntwrk/ledger";
 import { noProofClient, proofClient } from "./providers/proofProvider";
 import { WrappedZKConfigProvider } from "./providers/zkConfigProvider";
+// import toast from "react-hot-toast";
 import type { HydraStakePrivateState } from "@hydra/hydra-stake-protocol";
-import { DappContext } from "./DappContextProvider";
-
-export interface WalletAPI {
-  wallet: DAppConnectorWalletAPI;
-  coinPublicKey: string;
-  encryptionPublicKey: string;
-  uris: ServiceUriConfig;
-}
 
 interface WalletAPIType extends WalletAPI {
   address: string | undefined;
@@ -82,10 +66,9 @@ export type MidnightWalletContextType = {
   state: MidnightWalletState;
   providers: HydraStakeContractProviders | undefined;
   privateStateProvider: PrivateStateProvider<
-    typeof hydraStakePrivateStateId,
+    HydraStakePrivateStateId,
     HydraStakePrivateState
   >;
-  deployedHydraAPI: HydraAPI | undefined;
   publicDataProvider: PublicDataProvider;
   midnightProvider: MidnightProvider;
   walletProvider: WalletProvider;
@@ -93,21 +76,15 @@ export type MidnightWalletContextType = {
   checkProofServerStatus: (uri: string) => Promise<void>;
   proofProvider: ProofProvider<string>;
   disconnect: () => Promise<void>;
-  contractState: DerivedHydraStakeContractState | undefined;
-  privateState: HydraStakePrivateState | null;
-  setPrivateState: Dispatch<SetStateAction<HydraStakePrivateState | null>>;
-  isLoadingState: boolean;
-  setIsLoadingState: Dispatch<SetStateAction<boolean>>;
-  hasJoined: boolean;
 };
 
 export const MidnightWalletContext =
   createContext<MidnightWalletContextType | null>(null);
+
 const MidnightWalletProvider = ({
   children,
   logger,
 }: PropsWithChildren<{ logger: Logger }>) => {
-  const { setNotification } = useContext(DappContext)!;
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [hasConnected, setHasConnected] = useState<boolean>(false);
   const [walletAPI, setWalletAPI] = useState<WalletAPIType | undefined>();
@@ -125,89 +102,20 @@ const MidnightWalletProvider = ({
     walletAPI: undefined,
     error: null,
   });
-  const [deployedHydraAPI, setDeployedHydraAPI] = useState<
-    HydraAPI | undefined
-  >(undefined);
-  const [isJoining, setIsJoining] = useState<boolean>(false);
-  const [privateState, setPrivateState] =
-    useState<HydraStakePrivateState | null>(null);
-  const [contractState, setContractState] = useState<
-    DerivedHydraStakeContractState | undefined
-  >(undefined);
-  const [hasJoined, setHasJoined] = useState<boolean>(false);
-  const [isLoadingState, setIsLoadingState] = useState<boolean>(false);
-
-  // Fetches user private state informations
-  useEffect(() => {
-    if (!providers) {
-      return;
-    }
-
-    const getPrivateStateFunc = async () => {
-      const privState = await providers.privateStateProvider.get(
-        hydraStakePrivateStateId
-      );
-      setPrivateState(privState);
-    };
-
-    getPrivateStateFunc();
-  }, [contractState]);
-
-  useEffect(() => {
-    if (!providers) {
-      return;
-    }
-
-    // const params: DeploymentParams = {
-    //   validAssetContractAddress: nativeToken(),
-    //   mintDomain: "hydra-stake:tdust-pool",
-    //   deleglationContractAddress: import.meta.env.VITE_DUMMY_CONTRACT_ADDRESS,
-    //   scaleFactor: 1000000n,
-    // };
-
-    console.log("joining...");
-    const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
-    joinPool(contractAddress);
-    console.log("joined");
-  }, [providers]);
-
-  useEffect(() => {
-    if (!deployedHydraAPI) {
-      return;
-    }
-    const subscription = deployedHydraAPI.state.subscribe((state) => {
-      console.log({ state });
-      setContractState(state);
-      return;
-    });
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [deployedHydraAPI?.state]);
 
   const checkProofServerStatus = async (uri: string) => {
     try {
       const result = await fetch(`${uri}`);
       if (result.ok) {
-        setNotification({
-          type: "success",
-          message: "Proof-server is active",
-        });
+        console.log("Proof-server is active");
       } else {
-        setNotification({
-          type: "error",
-          message: "Proof-server is in-active",
-        });
+        console.log("Proof-server inactive");
       }
     } catch (error) {
       const errMsg =
         error instanceof Error
           ? `Proof server inactive: ${error.message}`
           : "Prove server not responding";
-      setNotification({
-        type: "error",
-        message: "An error occured",
-      });
       console.log(errMsg);
     }
   };
@@ -276,6 +184,7 @@ const MidnightWalletProvider = ({
 
   const proofProvider = useMemo(() => {
     const proof_server_uri = import.meta.env.VITE_PROOF_SERVER_URI;
+    console.log("proof-server-uri", proof_server_uri);
     if (walletAPI && proof_server_uri) {
       return proofClient(proof_server_uri as string);
     } else {
@@ -318,11 +227,10 @@ const MidnightWalletProvider = ({
     }
 
     setIsConnecting(true);
-    logger?.info("Attempting to reconnect wallet...");
+    console.info("Attempting to reconnect wallet...");
 
     try {
       const { wallet, uris } = await connectWallet();
-
       const connectedWalletState = await wallet.state();
 
       // Validate the wallet state
@@ -332,6 +240,11 @@ const MidnightWalletProvider = ({
       ) {
         throw new Error("Invalid wallet state - missing required fields");
       }
+
+      console.info({
+        message: "Wallet state retrieved",
+        connectedWalletState,
+      });
 
       const newWalletAPI = {
         address: connectedWalletState.address,
@@ -346,18 +259,16 @@ const MidnightWalletProvider = ({
 
       // Check proof server status
       await checkProofServerStatus(uris.proverServerUri);
-      setNotification({
-        type: "success",
-        message: "Reconnected Successfully",
-      });
+      console.log("Reconnected successfully");
 
-      logger?.info("Wallet reconnection successful");
+      console.info("Wallet reconnection successful");
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
           : "Failed to reconnect to wallet";
 
+      console.error("Wallet reconnection failed", { error: errorMessage });
       setError(errorMessage);
       setHasConnected(false);
 
@@ -365,10 +276,7 @@ const MidnightWalletProvider = ({
       sessionStorage.removeItem("WALLET_CONNECTED");
       sessionStorage.removeItem("WALLET_STATE");
 
-      setNotification({
-        type: "success",
-        message: "Failed to reconnect wallet. Please connect manually.",
-      });
+      console.log("Failed to reconnect wallet. Please connect manually.");
     } finally {
       setIsConnecting(false);
     }
@@ -376,20 +284,16 @@ const MidnightWalletProvider = ({
 
   // Enables user connect their wallet to the DAPP
   const connect = async () => {
-    if (hasConnected || isConnecting) {
-      return;
-    }
     setIsConnecting(true);
     setError(undefined);
-    logger?.info("Connecting to wallet....");
+    console.info("Connecting to wallet....");
 
     try {
       const { wallet, uris } = await connectWallet();
       if (!wallet.state) {
-        setNotification({
-          type: "error",
-          message: "Lace Wallet Not Found.",
-        });
+        console.log(
+          "Could not find Lace wallet extension, Check to see if you have installed it on your Chrome browser"
+        );
         return;
       }
       const connectedWalletState = await wallet.state();
@@ -402,6 +306,8 @@ const MidnightWalletProvider = ({
         throw new Error("Invalid wallet state - missing required fields");
       }
 
+      console.info("Wallet state", connectedWalletState);
+
       const newWalletAPI = {
         address: connectedWalletState.address,
         coinPublicKey: connectedWalletState.coinPublicKey,
@@ -409,8 +315,6 @@ const MidnightWalletProvider = ({
         wallet: wallet,
         uris: uris,
       };
-
-      console.log("Wallet state", newWalletAPI);
 
       setWalletAPI(newWalletAPI);
       setHasConnected(true);
@@ -421,139 +325,28 @@ const MidnightWalletProvider = ({
       // Check proof server status
       const proof_server_uri = import.meta.env.VITE_PROOF_SERVER_URI;
       await checkProofServerStatus(proof_server_uri && proof_server_uri);
-      setNotification({
-        type: "success",
-        message: "Connected successfully",
-      });
+      console.log("Connected successfully");
 
-      logger?.info("Wallet connection successful");
+      console.info("Wallet connection successful");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to connect to wallet";
 
       setError(errorMessage);
       setHasConnected(false);
-      console.log({ errorMessage });
-      setNotification({
-        type: "error",
-        message: "An error occured",
-      });
+      console.log(errorMessage);
+
+      console.error("Wallet connection failed", { error: errorMessage });
     } finally {
       setIsConnecting(false);
-    }
-  };
-
-  const disconnect = async () => {
-    sessionStorage.removeItem("WALLET_STATE");
-    sessionStorage.removeItem("WALLET_CONNECTED");
-    setWalletAPI(undefined);
-    setWalletState({
-      address: undefined,
-      isConnecting: false,
-      hasConnected: false,
-      coinPublicKey: undefined,
-      encryptionPublicKey: undefined,
-      providers: undefined,
-      walletAPI: undefined,
-      error: null,
-    });
-    window.location.reload();
-  };
-
-  const joinPool = async (contractAddress: ContractAddress) => {
-    if (isJoining || hasJoined) return;
-    if (!hasConnected) {
-      setNotification({
-        type: "error",
-        message: "Wallet must be connected before joining contract",
-      });
-      return;
-    }
-
-    if (!providers) {
-      setNotification({
-        type: "error",
-        message: "Provider not configured",
-      });
-      return;
-    }
-
-    setIsJoining(true);
-    setNotification(null);
-    try {
-      const deployedAPI = await HydraAPI.joinHydraStakeContract(
-        providers,
-        contractAddress
-      );
-      setDeployedHydraAPI(deployedAPI);
-      console.log({ deployedAPI });
-      setNotification({
-        type: "success",
-        message: "Contract joined Successfully",
-      });
-      setHasJoined(true);
-    } catch (error) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to deploy contract";
-      setNotification({
-        type: "error",
-        message: "An error occured",
-      });
-      logger?.error("Failed to deploy contract" + errMsg);
-    } finally {
-      setIsJoining(false);
-    }
-  };
-
-  const deployNewPool = async (deploymentParams: DeploymentParams) => {
-    //confirm if user is admin: authorized function
-
-    try {
-      if (isJoining || hasJoined) return;
-      if (!hasConnected) {
-        setNotification({
-          type: "error",
-          message: "Wallet must be connected before joining contract",
-        });
-        return;
-      }
-
-      if (!providers || !walletState.address) {
-        setNotification({
-          type: "error",
-          message: "Provider not configured",
-        });
-        return;
-      }
-      setIsJoining(true);
-      setNotification(null);
-      const deployedAPI = await HydraAPI.deployHydraStakeContract(
-        providers,
-        deploymentParams
-      );
-      setDeployedHydraAPI(deployedAPI);
-      setNotification({
-        type: "success",
-        message: "Contract joined Successfully",
-      });
-      setHasJoined(true);
-      console.log({ API: deployedAPI });
-    } catch (error) {
-      const errMsg =
-        error instanceof Error ? error.message : "Failed to deploy contract";
-      setNotification({
-        type: "error",
-        message: "An error occured",
-      });
-      logger?.error("Failed to deploy contract" + errMsg);
-    } finally {
-      setIsJoining(false);
     }
   };
 
   // Sets the wallet state as soon as the walletAPI is available after connection
   useEffect(() => {
     if (!walletAPI) return;
+
+    console.info("Updating wallet state with API", walletAPI);
 
     const newState: MidnightWalletState = {
       address: walletAPI.address,
@@ -588,6 +381,7 @@ const MidnightWalletProvider = ({
     };
 
     setProviders(newProviders);
+    console.info("Updated providers", newProviders);
   }, [
     walletAPI,
     hasConnected,
@@ -600,6 +394,23 @@ const MidnightWalletProvider = ({
     zkConfigProvider,
     proofProvider,
   ]);
+
+  const disconnect = async () => {
+    sessionStorage.removeItem("WALLET_STATE");
+    sessionStorage.removeItem("WALLET_CONNECTED");
+    window.location.reload();
+    setWalletAPI(undefined);
+    setWalletState({
+      address: undefined,
+      isConnecting: false,
+      hasConnected: false,
+      coinPublicKey: undefined,
+      encryptionPublicKey: undefined,
+      providers: undefined,
+      walletAPI: undefined,
+      error: null,
+    });
+  };
 
   // Initiates wallet reconnection on component mount
   useEffect(() => {
@@ -621,16 +432,6 @@ const MidnightWalletProvider = ({
       providers,
       disconnect,
       checkProofServerStatus: checkProofServerStatus,
-      isJoining,
-      hasJoined,
-      deployedHydraAPI,
-      joinPool,
-      deployNewPool,
-      privateState,
-      setPrivateState,
-      contractState,
-      setIsLoadingState,
-      isLoadingState,
     }),
     [
       walletState,
@@ -643,15 +444,6 @@ const MidnightWalletProvider = ({
       isConnecting,
       hasConnected,
       providers,
-      isJoining,
-      hasJoined,
-      deployedHydraAPI,
-      joinPool,
-      deployNewPool,
-      privateState,
-      setPrivateState,
-      contractState,
-      hasJoined,
     ]
   );
 

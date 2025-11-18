@@ -29,10 +29,10 @@ export const enableRetry = <T>(
           resolve(result);
         })
         .catch((error) => {
-          logger.error(`[${fnName}] failed: ${error.message}`);
+          logger.error(`[${fnName}] failed: ${error}`);
 
           if (retries <= 0) {
-            logger.error(`[${fnName}] failed: ${error.message}`);
+            logger.error(`[${fnName}] failed: ${error}`);
             reject(error);
           } else {
             logger.info(`[${fnName}] failed: Retrying in ${currentDelay}ms`);
