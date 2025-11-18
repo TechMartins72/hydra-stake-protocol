@@ -14,13 +14,6 @@ const Dashboard = () => {
     ? deploymentCtx?.contractState.scaleFactor
     : BigInt(1_000_000);
 
-  // Mock user data - replace with actual data from your context/API
-  const [userStats] = useState({
-    assetBalance: 0, // User's tDUST balance
-    stAssetBalance: 0, // User's sttDUST balance
-    totalStaked: 0, // Total amount user has staked
-    totalRewards: 0, // Total rewards earned
-  });
 
   // Redeem handler
   // const handleRedeemStake = async () => {
@@ -120,8 +113,7 @@ const Dashboard = () => {
                       <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <h3 className="text-sm font-medium text-gray-300">
-                      {walletCtx.privateState?.stakeMetadata.deposit_amount ??
-                        0}
+                      Asset Deposited
                     </h3>
                   </div>
                   {deploymentCtx?.isJoining ? (

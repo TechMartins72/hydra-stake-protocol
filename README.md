@@ -65,6 +65,40 @@ Hydra leverages Midnight's zero-knowledge primitives to provide unprecedented pr
 - Internal slashing checks with public proof of correct validator updates
 - No raw delegation assignments exposed on-chain
 
+## Project Structure
+
+```
+turborepo-root/
+├── packages/
+│   ├── ui/                           # Frontend application (Vite + React)
+│   │   ├── src/
+│   │   ├── public/
+│   │   ├── index.html
+│   │   ├── vite.config.ts
+│   │   └── package.json
+│   │
+│   ├── api/                          # Backend API service
+│   │   ├── src/
+│   │   └── package.json
+│   │
+│   ├── contract/                     # Smart contracts
+│   │   ├── Admin.compact            # Admin contract
+│   │   ├── GlobalStatesAndWitnesses.compact  # Global states contract
+│   │   ├── hydra-stake-protocol.compact      # Hydra staking protocol
+│   │   ├── utils.compact            # Contract utilities
+│   │   ├── witnesses.ts             # Witness definitions
+│   │   └── package.json
+│   │
+│   └── cli/                          # Command-line interface tool
+│       ├── src/
+│       └── package.json
+│
+├── turbo.json                        # Turborepo configuration
+├── package.json                      # Root package.json
+├── pnpm-workspace.yaml              # Workspace configuration
+└── README.md                         # This file
+```
+
 ## Technology Stack
 
 ### Smart Contracts
@@ -175,6 +209,7 @@ yarn start
 - [ ] Multi-validator support
 
 ## Contributors
+
 - [@techmartins](https://github.com/TechMartins72)
 - [@codebigint](https://github.com/codeBigInt)
 - [@musalawal](https://github.com/musalawal04)
