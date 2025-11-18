@@ -95,7 +95,6 @@ turborepo-root/
 │
 ├── turbo.json                        # Turborepo configuration
 ├── package.json                      # Root package.json
-├── pnpm-workspace.yaml              # Workspace configuration
 └── README.md                         # This file
 ```
 
