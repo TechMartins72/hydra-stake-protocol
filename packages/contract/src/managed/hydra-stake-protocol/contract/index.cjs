@@ -2750,6 +2750,20 @@ function ledger(state) {
                                                       { popeq: { cached: false,
                                                                  result: undefined } }]).value);
     },
+    get superAdmin() {
+      return _descriptor_2.fromValue(Contract._query(context,
+                                                     partialProofData,
+                                                     [
+                                                      { dup: { n: 0 } },
+                                                      { idx: { cached: false,
+                                                               pushPath: false,
+                                                               path: [
+                                                                      { tag: 'value',
+                                                                        value: { value: _descriptor_25.toValue(7n),
+                                                                                 alignment: _descriptor_25.alignment() } }] } },
+                                                      { popeq: { cached: false,
+                                                                 result: undefined } }]).value);
+    },
     admins: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {

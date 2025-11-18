@@ -10,7 +10,7 @@ export {
      validAssetCoinType, StakePrivateState, Stake, StakeStatus, stakings,
      QualifiedCoinInfo, CoinInfo, SCALE_FACTOR, admins, stakePoolStatus, 
      StakePoolStatus, stAssetCoinColor, delegate, setTokenColor, removeNewAdmin, 
-     addNewAdmin, stAssetDomainSeparator, delegationContractAddress
+     addNewAdmin, stAssetDomainSeparator, delegationContractAddress, superAdmin
 };
 
 /** Initialize the contract with admin specified parameters */

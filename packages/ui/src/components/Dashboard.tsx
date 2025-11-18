@@ -150,9 +150,14 @@ const Dashboard = () => {
 
           {/* Pools Section */}
           <div className="glass rounded-3xl p-8 border border-blue-500/20 bg-linear-to-br from-blue-950/40 via-indigo-950/20 to-transparent">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-lg bg-blue-500/20">
-                <Lock className="w-6 h-6 text-blue-400" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex gap-2 justify-center">
+                <div className="p-2 rounded-lg bg-blue-500/20">
+                  <Lock className="w-6 h-6 text-blue-400" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Pools
+                </h2>
               </div>
               <h2 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Pools

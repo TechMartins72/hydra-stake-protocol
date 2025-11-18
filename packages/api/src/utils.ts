@@ -1,9 +1,6 @@
 import { Logger } from "pino";
-import {
-  DerivedStaker,
-  LedgerMapItem,
-} from "./common-types.js";
-import {} from "@midnight-ntwrk/midnight-js-utils"
+import { DerivedStaker, LedgerMapItem } from "./common-types.js";
+import { toHex } from "@midnight-ntwrk/midnight-js-utils";
 
 export const randomNonceBytes = (
   length: number,
@@ -114,10 +111,15 @@ export function createDerivedAdminArray(admins: {
   size(): bigint;
   member(elem_0: Uint8Array): boolean;
   [Symbol.iterator](): Iterator<Uint8Array>;
-}): Uint8Array[] {
-  return Array.from(admins);
-}
+}): string[] {
+  let adminsArray: string[] = [];
 
+  Array.from(admins).forEach((admin) => {
+    adminsArray.push(toHex(admin));
+  });
+
+  return adminsArray;
+}
 
 export function pad(s: string, n: number): Uint8Array {
   const encoder = new TextEncoder();

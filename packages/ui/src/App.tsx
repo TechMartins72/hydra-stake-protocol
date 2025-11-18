@@ -63,12 +63,7 @@ function App() {
       <NotificationCenter notification={notification} />
       <Footer />
     </>
-  ) : (
-    <>
-      <UnauthenticatedPage />
-      <NotificationCenter notification={notification} />
-    </>
-  );
+  )
 }
 
 export default App;

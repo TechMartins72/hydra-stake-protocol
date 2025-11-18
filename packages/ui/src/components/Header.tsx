@@ -9,6 +9,18 @@ const Header = () => {
   // const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const walletCtx = useNewMidnightWallet();
 
+  useEffect(() => {
+    if (!contractState) {
+      return;
+    }
+    setIsSuperAdmin(() => {
+      return (
+        contractState.superAdmin ===
+        import.meta.env.VITE_SUPER_ADMIN_COIN_PUBKEY
+      );
+    });
+  });
+
   return (
     <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto py-4 flex items-center justify-between">
@@ -39,23 +51,21 @@ const Header = () => {
               Dashboard
             </button>
 
-            <button
-              onClick={() => {
-                setRoute("admin");
-              }}
-              className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
-                route === "admin"
-                  ? "bg-accent/20 text-accent"
-                  : "text-muted-foreground hover:text-accent"
-              }`}
-            >
-              <History className="w-4 h-4" />
-              Admin
-            </button>
-
-            {/* <button className="p-2 rounded-lg hover:bg-card transition-all cursor-pointer">
-                  <Settings className="w-5 h-5 text-muted-foreground hover:text-accent transition-all" />
-                </button> */}
+            {isSuperAdmin && (
+              <button
+                onClick={() => {
+                  setRoute("admin");
+                }}
+                className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
+                  route === "admin"
+                    ? "bg-accent/20 text-accent"
+                    : "text-muted-foreground hover:text-accent"
+                }`}
+              >
+                <History className="w-4 h-4" />
+                Admin
+              </button>
+            )}
           </div>
           <button
             onClick={walletCtx?.connectFn}

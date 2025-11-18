@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
-  Wallet,
-  Users,
-  TrendingUp,
+  AlertCircle,
+  ExternalLink,
   Lock,
   Plus,
-  Trash2,
+  TrendingUp,
+  Users,
+  Wallet,
   Shield,
-  ExternalLink,
-  AlertCircle,
+  Trash2,
 } from "lucide-react";
 import useDeployment from "@/hooks/useDeployment";
 
@@ -19,42 +19,69 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("pools");
   const [newAdminAddress, setNewAdminAddress] = useState("");
   const [showAddAdmin, setShowAddAdmin] = useState(false);
-  const [selectedPool, setSelectedPool] = useState(null);
-  const [delegateAmount, setDelegateAmount] = useState("");
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [delegateAddress, setDelegateAddress] = useState("");
+  const [delegateAmount, setDelegateAmount] = useState("");
+  const [selectedPool, setSelectedPool] = useState<string | null>(null);
+  const [isAddingAdmin, setIsAddingAdmin] = useState(false);
+  const [isDelegating, setIsDelegating] = useState(false);
+
+  const SCALE_FACTOR = contractState
+    ? contractState.scaleFactor
+    : BigInt(1_000_000);
 
   // if(!deploymentCtx?.contractState) return;
 
   // Mock data - replace with actual data from your context
   const delegateTokens = () => {};
-  const [admins, setAdmins] = useState([
-    {
-      id: 1,
-      address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-      role: "Super Admin",
-      addedDate: "2024-01-15",
-      isSuperAdmin: true,
-    },
-  ]);
 
-  const handleAddAdmin = () => {
-    if (newAdminAddress.trim()) {
-      const newAdmin = {
-        id: admins.length + 1,
-        address: newAdminAddress,
-        role: "Admin",
-        addedDate: new Date().toISOString().split("T")[0],
-        isSuperAdmin: false,
-      };
-      setAdmins([...admins, newAdmin]);
-      setNewAdminAddress("");
-      setShowAddAdmin(false);
+  const handleAddAdmin = async () => {
+    try {
+      setIsAddingAdmin(true);
+      if (!deployedHydraAPI) {
+        return;
+      }
+      console.log("Removing admin...");
+      await deployedHydraAPI.removeAdmin(newAdminAddress.trim());
+      alert("Admin Removed");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsAddingAdmin(false);
     }
   };
 
-  const handleRemoveAdmin = () => {};
+  const handleRemoveAdmin = async (coinPubKey: string) => {
+    try {
+      setIsDeleting(true);
+      if (!deployedHydraAPI) {
+        return;
+      }
+      console.log("Deleting Admin");
+      await deployedHydraAPI.removeAdmin(coinPubKey);
+      alert(`Admin ${coinPubKey}, has been added successfully`);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
-  const handleDelegate = () => {};
+  const handleDelegate = async () => {
+    try {
+      setIsDelegating(true);
+      if (!deployedHydraAPI) {
+        return;
+      }
+      console.log("Delegating stake...");
+      await deployedHydraAPI.delegate();
+      alert("Stake delegated successfully");
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setIsDelegating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -200,8 +227,20 @@ const AdminDashboard = () => {
                 onClick={delegateTokens}
                 className="w-full px-4 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all font-semibold text-sm flex items-center justify-center gap-2"
               >
-                <ExternalLink className="w-4 h-4" />
-                Delegate Locked Tokens
+                {!isDelegating ? (
+                  <>
+                    <ExternalLink className="w-4 h-4" />
+                    Delegate Locked Tokens
+                  </>
+                ) : (
+                  <>
+                    <div className="relative w-16 h-16 mb-4">
+                      <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
+                      <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
+                    </div>
+                    <p>Delegating Locked Tokens</p>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -247,7 +286,14 @@ const AdminDashboard = () => {
                       onClick={handleAddAdmin}
                       className="px-6 py-2 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 transition-all font-semibold"
                     >
-                      Add Admin
+                      {isAddingAdmin ? (
+                        <div className="relative w-16 h-16 mb-4">
+                          <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
+                          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
+                        </div>
+                      ) : (
+                        <p>Add Admin</p>
+                      )}
                     </button>
                     <button
                       onClick={() => {
@@ -269,23 +315,15 @@ const AdminDashboard = () => {
                   <div className="w-12 h-12 rounded-full flex items-center justify-center bg-purple-500/10">
                     <Shield className="w-6 h-6 text-purple-500" />
                   </div>
-                  <div>
+                  <div className="flex flex-col">
                     <p className="font-mono text-foreground font-medium">
                       {import.meta.env.VITE_CONTRACT_ADDRESS.substring(0, 10) + "***"}
                     </p>
-
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mediumbg-purple-500/10 text-purple-500">
                       Super Admin
                     </span>
                   </div>
                 </div>
-
-                <button
-                  onClick={() => handleRemoveAdmin()}
-                  className="p-2 rounded-lg hover:bg-red-500/10 transition-all group"
-                >
-                  <Trash2 className="w-5 h-5 text-muted-foreground group-hover:text-red-500 transition-all" />
-                </button>
               </div>
               {deploymentCtx?.contractState?.admins.map((admin, idx) => (
                 <div
@@ -298,7 +336,7 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="font-mono text-foreground font-medium">
-                        {admin}
+                        {admin.substring(0, 20) + "***"}
                       </p>
                       <div className="flex items-center gap-3 mt-1">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
@@ -306,6 +344,20 @@ const AdminDashboard = () => {
                         </span>
                       </div>
                     </div>
+                    <button
+                      disabled={isDeleting}
+                      onClick={() => handleRemoveAdmin(admin)}
+                      className="p-2 rounded-lg hover:bg-red-500/10 transition-all group"
+                    >
+                      {isDeleting ? (
+                        <div className="relative w-16 h-16 mb-4">
+                          <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
+                          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
+                        </div>
+                      ) : (
+                        <Trash2 className="w-5 h-5 text-muted-foreground group-hover:text-red-500 transition-all" />
+                      )}
+                    </button>
                   </div>
                 </div>
               ))}

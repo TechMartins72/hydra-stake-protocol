@@ -33,7 +33,8 @@ export type DerivedHydraStakeContractState = {
   protocolTVL: QualifiedCoinInfo;
   mintTokenColor: string;
   delegationContractAddress: string;
-  admins: Uint8Array[];
+  superAdmin: string;
+  admins: string[];
   stakePoolStatus: StakePoolStatus;
   stakings: DerivedStaker[];
   validAssetCoinType: string;

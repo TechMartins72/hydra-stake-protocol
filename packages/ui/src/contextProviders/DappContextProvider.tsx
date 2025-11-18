@@ -1,5 +1,6 @@
 import {
   createContext,
+  useEffect,
   useState,
   type Dispatch,
   type PropsWithChildren,
@@ -36,7 +37,6 @@ export interface DappConfigType {
   setAction: Dispatch<SetStateAction<actionType>>;
 }
 
-
 const DappContextProvider: React.FC<Readonly<PropsWithChildren>> = ({
   children,
 }) => {
@@ -52,6 +52,12 @@ const DappContextProvider: React.FC<Readonly<PropsWithChildren>> = ({
     message: string;
   } | null>(null);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  }, [notification]);
+
   const value: DappConfigType = {
     notification,
     setNotification,
@@ -63,7 +69,8 @@ const DappContextProvider: React.FC<Readonly<PropsWithChildren>> = ({
     setIsStakingOpen,
     isOpenCreatePool,
     setIsOpenCreatePool,
-    action, setAction
+    action,
+    setAction,
   };
 
   return <DappContext.Provider value={value}>{children}</DappContext.Provider>;

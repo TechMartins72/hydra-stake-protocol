@@ -32,6 +32,7 @@ import {
   nativeToken,
   tokenType,
 } from "@midnight-ntwrk/ledger";
+import { toHex } from "@midnight-ntwrk/midnight-js-utils";
 
 const HydraStakeContractInstance: HydraStakeContract = new Contract(witnesses);
 
@@ -89,6 +90,7 @@ export class HydraAPI implements DeployedHydraAPI {
           protocolTVL: ledgerState.protocolTVL,
           mintTokenColor: utils.uint8arraytostring(ledgerState.stAssetCoinColor),
           delegationContractAddress: utils.uint8arraytostring(ledgerState.delegationContractAddress),
+          superAdmin: toHex(ledgerState.superAdmin),
           admins: utils.createDerivedAdminArray(ledgerState.admins),
           stakePoolStatus: ledgerState.stakePoolStatus,
           stakings: utils.createArrayFromLedgerMapping(ledgerState.stakings),

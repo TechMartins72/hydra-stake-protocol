@@ -80,6 +80,7 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[Uint8Array, Stake]>
   };
   readonly validAssetCoinType: Uint8Array;
+  readonly superAdmin: Uint8Array;
   admins: {
     isEmpty(): boolean;
     size(): bigint;
