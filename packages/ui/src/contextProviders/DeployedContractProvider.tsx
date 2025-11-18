@@ -128,19 +128,6 @@ export const DeployedContractProvider = ({
     return () => stateSubscription.unsubscribe();
   }, [deployedHydraAPI]);
 
-  useEffect(() => {
-    if (!deployedHydraAPI && !walletContext) return;
-    (async function fetchPrivateState() {
-      const userPrivateState = await walletContext?.privateStateProvider.get(
-        "HydraStakePrivateState"
-      );
-
-      if (userPrivateState) {
-        setPrivateState(userPrivateState);
-      } else return;
-    })();
-  }, [walletContext?.privateStateProvider, contractState]);
-
 
   const contextValue: DeploymentProvider = {
     isJoining,

@@ -10,6 +10,7 @@ import AdminDashboard from "./components/Admin";
 import { MidnightWalletContext } from "./contextProviders/MidnightWalletProvider";
 import UnauthenticatedPage from "./components/UnauthenticatedPage";
 import { DeployedContractContext } from "./contextProviders/DeployedContractProvider";
+import { Loader2 } from "lucide-react";
 
 function App() {
   const {
@@ -23,9 +24,8 @@ function App() {
   } = useContext(DappContext)!;
   const walletContext = useContext(MidnightWalletContext);
   const deploymentContext = useContext(DeployedContractContext);
-  const notificationContext = useContext(DappContext);
+  // const notificationContext = useContext(DappContext);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
   const handleActionComplete = (success: boolean, message: string) => {
@@ -34,30 +34,12 @@ function App() {
     setTimeout(() => setNotification(null), 4000);
   };
 
-  useEffect(() => {
-    (async () => {
-      console.log("Trying to join contract")
-      setIsLoading(true);
-      try {
-        await deploymentContext?.onJoinContract();
-        console.log("Joined contract")
-        setIsLoading(false);
-
-      } catch (error) {
-        setIsLoading(false);
-        const errMsg =
-          error instanceof Error ? error.message : "Failed to join contract";
-        notificationContext?.setNotification({
-          type: "error",
-          message: errMsg
-        });
-      }
-    })();
-  }, [walletContext?.state]);
 
 
-  if (isLoading) {
-    return <div>Loading.....</div>
+  if (deploymentContext?.isJoining) {
+    return <div className="w-full h-screen flex justify-center items-center">
+      <Loader2 className="fill-[#00d9ff] h-24 w-24 animate-spin delay-1000" />
+    </div>
   }
 
   return walletContext?.hasConnected ? (

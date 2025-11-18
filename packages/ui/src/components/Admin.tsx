@@ -14,6 +14,7 @@ import useDeployment from "@/hooks/useDeployment";
 
 const AdminDashboard = () => {
   const deploymentCtx = useDeployment();
+  const SCALE_FACTOR = deploymentCtx?.contractState ? deploymentCtx?.contractState.scaleFactor : BigInt(1_000_000);
 
   const [activeTab, setActiveTab] = useState("pools");
   const [newAdminAddress, setNewAdminAddress] = useState("");
@@ -21,6 +22,8 @@ const AdminDashboard = () => {
   const [selectedPool, setSelectedPool] = useState(null);
   const [delegateAmount, setDelegateAmount] = useState("");
   const [delegateAddress, setDelegateAddress] = useState("");
+
+  // if(!deploymentCtx?.contractState) return;
 
   // Mock data - replace with actual data from your context
   const delegateTokens = () => {};
@@ -74,7 +77,7 @@ const AdminDashboard = () => {
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {String(deploymentCtx?.contractState?.protocolTVL.value) ?? 0}{" "}
+              {deploymentCtx?.contractState ? (deploymentCtx?.contractState?.protocolTVL.value) / SCALE_FACTOR : 0}{" "}
               <small>tDUST</small>
             </p>
           </div>
@@ -85,7 +88,7 @@ const AdminDashboard = () => {
               <Wallet className="w-5 h-5 text-accent" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {deploymentCtx?.contractState?.totalMint} <small>sttDUST</small>
+              {deploymentCtx?.contractState ? (deploymentCtx?.contractState?.totalMint) / SCALE_FACTOR : 0}{" "}<small>sttDUST</small>
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Across all pools
@@ -109,7 +112,7 @@ const AdminDashboard = () => {
               <Users className="w-5 h-5 text-purple-500" />
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {deploymentCtx?.contractState?.admins.length}
+              {deploymentCtx?.contractState ? deploymentCtx?.contractState?.admins.length + 1 : 1}
             </p>
             <p className="text-xs text-muted-foreground mt-1">1 super admin</p>
           </div>
@@ -180,7 +183,7 @@ const AdminDashboard = () => {
                     Total Value Locked
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    tDUST {String(deploymentCtx?.contractState?.protocolTVL.value) ?? 0}
+                    tDUST {deploymentCtx?.contractState ? deploymentCtx?.contractState?.protocolTVL.value / SCALE_FACTOR : 0}
                   </p>
                 </div>
                 <div>
@@ -188,7 +191,7 @@ const AdminDashboard = () => {
                     stAssets Minted
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    sttDUST {deploymentCtx?.contractState?.totalMint}
+                    sttDUST {deploymentCtx?.contractState ? deploymentCtx?.contractState?.totalMint / SCALE_FACTOR : 0}
                   </p>
                 </div>
               </div>
@@ -229,7 +232,7 @@ const AdminDashboard = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      Wallet Address
+                      User coin public key
                     </label>
                     <input
                       type="text"
@@ -268,7 +271,7 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <p className="font-mono text-foreground font-medium">
-                      super***admins***here!
+                      {import.meta.env.VITE_CONTRACT_ADDRESS.substring(0, 10) + "***"}
                     </p>
 
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mediumbg-purple-500/10 text-purple-500">

@@ -38,6 +38,9 @@ export type DerivedHydraStakeContractState = {
   stakings: DerivedStaker[];
   validAssetCoinType: string;
   scaleFactor: bigint;
+  depositAmount: bigint;
+  redeemable: bigint;
+  stAssetMinted: bigint;
 };
 
 export type DerivedStaker = {

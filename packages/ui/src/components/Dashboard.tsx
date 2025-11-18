@@ -1,14 +1,3 @@
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { Zap, Lock, Wallet, TrendingUp, DollarSign, Award } from "lucide-react";
 import PoolCard from "./PoolCard";
 import { useContext, useState } from "react";
@@ -16,30 +5,11 @@ import { DappContext } from "../contextProviders/DappContextProvider";
 import useDeployment from "@/hooks/useDeployment";
 import useNewMidnightWallet from "@/hooks/useMidnightWallet";
 
-const stakingData = [
-  { month: "Jan", amount: 4000 },
-  { month: "Feb", amount: 5200 },
-  { month: "Mar", amount: 6800 },
-  { month: "Apr", amount: 7400 },
-  { month: "May", amount: 8900 },
-  { month: "Jun", amount: 9800 },
-];
-
-const rewardsData = [
-  { day: "Mon", rewards: 120 },
-  { day: "Tue", rewards: 150 },
-  { day: "Wed", rewards: 140 },
-  { day: "Thu", rewards: 180 },
-  { day: "Fri", rewards: 200 },
-  { day: "Sat", rewards: 190 },
-  { day: "Sun", rewards: 220 },
-];
-
 const Dashboard = () => {
   const deploymentCtx = useDeployment();
   const walletCtx = useNewMidnightWallet();
   const { setNotification, setIsStakingOpen } = useContext(DappContext)!;
-  const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
+  // const [_, setIsRedeeming] = useState<boolean>(false);
   const SCALE_FACTOR = deploymentCtx?.contractState ? deploymentCtx?.contractState.scaleFactor : BigInt(1_000_000);
 
   // Mock user data - replace with actual data from your context/API
@@ -51,32 +21,32 @@ const Dashboard = () => {
   });
 
   // Redeem handler
-  const handleRedeemStake = async () => {
-    setIsRedeeming(true);
-    try {
-      if (!deploymentCtx?.deployedHydraAPI) {
-        return;
-      }
+  // const handleRedeemStake = async () => {
+  //   setIsRedeeming(true);
+  //   try {
+  //     if (!deploymentCtx?.deployedHydraAPI) {
+  //       return;
+  //     }
 
-      await deploymentCtx?.deployedHydraAPI.redeem(
-        Number(deploymentCtx?.privateState?.stakeMetadata.stAssets_minted)
-      );
+  //     await deploymentCtx?.deployedHydraAPI.redeem(
+  //       Number(deploymentCtx?.privateState?.stakeMetadata.stAssets_minted)
+  //     );
 
-      setNotification({
-        type: "success",
-        message: "Redeemed successfully"
-      })
+  //     setNotification({
+  //       type: "success",
+  //       message: "Redeemed successfully"
+  //     })
 
-      setIsRedeeming(false);
-    } catch (error) {
-      console.log({ error });
-      setNotification({
-        type: "error",
-        message: "Failed to redeemed"
-      })
-      setIsRedeeming(false);
-    }
-  };
+  //     setIsRedeeming(false);
+  //   } catch (error) {
+  //     console.log({ error });
+  //     setNotification({
+  //       type: "error",
+  //       message: "Failed to redeemed"
+  //     })
+  //     setIsRedeeming(false);
+  //   }
+  // };
 
 
 
@@ -137,7 +107,7 @@ const Dashboard = () => {
                     <div className="h-9 w-32 bg-purple-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {deploymentCtx?.privateState ? deploymentCtx?.privateState?.stakeMetadata.stAssets_minted / SCALE_FACTOR : 0} sttDUST
+                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.stAssetMinted / SCALE_FACTOR : 0} sttDUST
                     </p>
                   )}
                 </div>
@@ -148,14 +118,14 @@ const Dashboard = () => {
                       <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <h3 className="text-sm font-medium text-gray-300">
-                      {deploymentCtx?.privateState ? deploymentCtx?.privateState?.stakeMetadata.deposit_amount / SCALE_FACTOR : 0}
+                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.depositAmount / SCALE_FACTOR : 0}
                     </h3>
                   </div>
                   {deploymentCtx?.isJoining ? (
                     <div className="h-9 w-32 bg-emerald-500/10 animate-pulse rounded" />
                   ) : (
                     <p className="text-3xl font-bold text-white mb-1">
-                      {deploymentCtx?.privateState ? deploymentCtx?.privateState.stakeMetadata.redeemable / SCALE_FACTOR : 0}
+                      {deploymentCtx?.contractState ? deploymentCtx?.contractState.redeemable / SCALE_FACTOR : 0}
                       tDUST
                     </p>
                   )}
@@ -290,25 +260,6 @@ const Dashboard = () => {
                 <div className="w-3 h-3 rounded-full bg-accent glow-accent" />
                 Staking Growth
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={stakingData}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="rgba(0, 217, 255, 0.1)"
-                  />
-                  <XAxis stroke="rgba(232, 232, 255, 0.5)" />
-                  <YAxis stroke="rgba(232, 232, 255, 0.5)" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#0A0A4D",
-                      border: "1px solid rgba(0, 217, 255, 0.3)",
-                      borderRadius: "8px",
-                    }}
-                    labelStyle={{ color: "#E8E8FF" }}
-                  />
-                  <Bar dataKey="amount" fill="#00D9FF" radius={8} />
-                </BarChart>
-              </ResponsiveContainer>
             </div>
 
             <div className="glass glass-hover rounded-2xl p-6 border border-border/50">
@@ -316,31 +267,6 @@ const Dashboard = () => {
                 <div className="w-3 h-3 rounded-full bg-accent glow-accent" />
                 Weekly Rewards
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={rewardsData}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="rgba(0, 217, 255, 0.1)"
-                  />
-                  <XAxis stroke="rgba(232, 232, 255, 0.5)" />
-                  <YAxis stroke="rgba(232, 232, 255, 0.5)" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#0A0A4D",
-                      border: "1px solid rgba(0, 217, 255, 0.3)",
-                      borderRadius: "8px",
-                    }}
-                    labelStyle={{ color: "#E8E8FF" }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="rewards"
-                    stroke="#00D9FF"
-                    dot={{ fill: "#00D9FF", r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
             </div>
           </div>
         </div>

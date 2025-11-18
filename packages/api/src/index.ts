@@ -83,7 +83,7 @@ export class HydraAPI implements DeployedHydraAPI {
           ),
         concat(from(providers.privateStateProvider.get(hydraStakePrivateStateId))),
       ],
-      (ledgerState, _) => {
+      (ledgerState, privateState) => {
         return {
           totalMint: ledgerState.total_stAsset_Minted,
           protocolTVL: ledgerState.protocolTVL,
@@ -93,7 +93,10 @@ export class HydraAPI implements DeployedHydraAPI {
           stakePoolStatus: ledgerState.stakePoolStatus,
           stakings: utils.createArrayFromLedgerMapping(ledgerState.stakings),
           validAssetCoinType: utils.uint8arraytostring(ledgerState.validAssetCoinType),
-          scaleFactor: ledgerState.SCALE_FACTOR
+          scaleFactor: ledgerState.SCALE_FACTOR,
+          depositAmount: privateState ? privateState?.stakeMetadata.deposit_amount : 0n,
+          stAssetMinted: privateState ? privateState?.stakeMetadata.stAssets_minted : 0n,
+          redeemable: privateState ? privateState?.stakeMetadata.redeemable : 0n
         };
       }
     );

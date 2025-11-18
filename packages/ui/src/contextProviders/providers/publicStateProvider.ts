@@ -14,7 +14,7 @@ import type {
 import { type Logger } from "pino";
 import { enableRetry } from "./enableRetry";
 import type { Observable } from "rxjs";
-
+  
 export class WrappedPublicStateProvider implements PublicDataProvider {
   constructor(
     private readonly publicDataProvider: PublicDataProvider,
@@ -81,17 +81,44 @@ export class WrappedPublicStateProvider implements PublicDataProvider {
   }
 
   queryZSwapAndContractState(
-    contractAddress: ContractAddress,
-    config?: BlockHeightConfig | BlockHashConfig
-  ): Promise<[ZswapChainState, ContractState] | null> {
-    return enableRetry(
-      () =>
-        this.publicDataProvider.queryZSwapAndContractState(
+  contractAddress: ContractAddress,
+  config?: BlockHeightConfig | BlockHashConfig
+): Promise<[ZswapChainState, ContractState] | null> {
+  return enableRetry(
+    async () => {
+      // Add validation before the actual call
+      if (!contractAddress || typeof contractAddress !== 'string') {
+        this.logger.error({ 
+          message: 'Invalid contract address', 
+          contractAddress,
+          type: typeof contractAddress 
+        });
+        throw new Error('Invalid contract address format');
+      }
+
+      try {
+        const states = await this.publicDataProvider.queryZSwapAndContractState(
           contractAddress,
           config
-        ),
-      "queryZSwapAndContractState",
-      this.logger
-    );
-  }
+        );
+        
+        if (!states) {
+          this.logger.warn({message: 'No states returned from query', contractAddress });
+        }
+        
+        return states;
+      } catch (error) {
+        this.logger.error({
+          message: 'Failed to query ZSwap and contract state', 
+          error: error instanceof Error ? error.message : String(error),
+          contractAddress,
+          addressLength: contractAddress?.length 
+        });
+        throw error;
+      }
+    },
+    "queryZSwapAndContractState",
+    this.logger
+  );
+}
 }

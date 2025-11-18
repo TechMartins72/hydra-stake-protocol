@@ -78,7 +78,7 @@ const StakingModal = ({ onClose, onComplete }: StakingModalProps) => {
           {/* Header */}
           <div className="border-b border-border/50 p-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-foreground">
-              "Stake Your Asset"
+              Stake Your Asset
             </h2>
             <button
               onClick={handleReset}
