@@ -94,7 +94,7 @@ turborepo-root/
 │
 ├── turbo.json                        # Turborepo configuration
 ├── package.json                      # Root package.json
-└── README.md                         # This file
+└── README.md                        
 ```
 
 ## Technology Stack
